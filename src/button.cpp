@@ -32,9 +32,9 @@ Bounce bt_Rec = Bounce(25, DEBOUNCE_TIME);
 
 void init_button(void)
 {
-    pinMode(1, INPUT);
-    pinMode(2, INPUT);
-    pinMode(3, INPUT);
+    pinMode(1, INPUT_PULLUP);
+    pinMode(2, INPUT_PULLUP);
+    pinMode(3, INPUT_PULLUP);
 
     pinMode(30, INPUT_PULLUP);
     pinMode(29, INPUT_PULLUP);
