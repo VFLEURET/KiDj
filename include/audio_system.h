@@ -14,6 +14,13 @@
 #include "audio/AudioSampleGong.h"         // http://www.freesound.org/people/juskiddink/sounds/86773/
 #include "audio/AudioSampleCashregister.h" // http://www.freesound.org/people/kiddpark/sounds/201159/
 
+#include "audio/AudioSampleVache.h"
+#include "audio/AudioSampleApplau.h"
+#include "audio/AudioSampleChat.h"
+#include "audio/AudioSampleChien.h"
+#include "audio/AudioSampleSly.h"
+#include "audio/AudioSampleXylo.h"
+
 void init_mixer(void);
 void init_audio(void);
 void update_vumetre(void);

@@ -1,8 +1,41 @@
 #ifndef _LED_H
 #define _LED_H
 
+typedef struct{
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+}rgb_t;
+
+typedef enum {
+  NO_LED,
+  CHARGE_LED,
+  EMPTY_BATT_LED,
+  PSU_EXT_LED,
+  PSU_BATT_LED,
+  MICRO_LED,
+  PLAYING_LED,
+  PAUSE_LED,
+  VEILLE_LED,
+} led_state_t;
+
 void init_led(void);
 void update_animation(void);
+void led_rgb(rgb_t color, uint8_t bright);
+void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout);
+void led_state(led_state_t new_state);
+
+
+#define RED				((rgb_t){255,0,0})
+#define GREEN			((rgb_t){0,255,0})
+#define BLUE			((rgb_t){0,0,255})
+#define BLUE_AZUR	((rgb_t){37,172,220})
+#define YELLOW		((rgb_t){255,255,0})
+#define MAGENTA		((rgb_t){255,0,255})
+#define CYAN			((rgb_t){0,255,255})
+#define ORANGE		((rgb_t){255,127,0})
+#define BLACK			((rgb_t){0,0,0})
+#define PINK      ((rgb_t){155,0,128})
 
 //addr
 #define POWERCNT        0x02

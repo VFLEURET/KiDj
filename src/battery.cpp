@@ -1,6 +1,8 @@
 #include <Audio.h>
 #include <Wire.h>
-#include <battery.h>
+
+#include "battery.h"
+#include "led.h"
 
 #define ACOK 34
 
@@ -105,7 +107,7 @@ void update_fuel(bool print_flag) {
       //info_charger();
     }
 
-    volt = (fuel_gauge_read(0x19, 2) >> 7 ) & 0x1FF;
+    //volt = (fuel_gauge_read(0x19, 2) >> 7 ) & 0x1FF;
     current = (int16_t)(fuel_gauge_read(0x0A, 2))/8;
     //Temp = (fuel_gauge_read(0x16, 2) >> 8) & 0xFF;
     //capa = fuel_gauge_read(0x05, 2);
@@ -120,15 +122,15 @@ void update_fuel(bool print_flag) {
         previous_Temp = Temp;
         previous_cap = capa;
         previous_SOC = soc;
-       /* if (current > 200)
-          //led_state(CHARGE_LED);
+        if (current > 200)
+          led_state(CHARGE_LED);
         else if (soc < 10)
-          //led_state(EMPTY_BATT_LED);
+          led_state(EMPTY_BATT_LED);
         else if (state_charger)
-          //led_state(PSU_EXT_LED);
+          led_state(PSU_EXT_LED);
         else
-          //led_state(PSU_BATT_LED);
-*/
+          led_state(PSU_BATT_LED);
+
         if (print_flag)
           Serial.printf("Fuel gauge : %d0mV %dmA %d%%\r\n", volt, current, soc);
 //          Serial.print("Fuel gauge : %d0mV %dmA %d*C %dmAh %d%%\r\n", volt, current, Temp, capa, soc);

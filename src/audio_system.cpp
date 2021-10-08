@@ -1,11 +1,10 @@
-#include "audio_system.h"
-
-
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
+
+#include "audio_system.h"
 
 // GUItool: begin automatically generated code
 AudioPlayMemory          playMem1;       //xy=170,20
