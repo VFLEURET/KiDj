@@ -7,19 +7,20 @@
 #define LED_EN 35
 
 static uint32_t previous_millis;
+static bool led_enable_flag = false;
 
-void AN32183_write_cmd(uint8_t reg, uint8_t length, uint8_t* data)
+uint8_t AN32183_write_cmd(uint8_t reg, uint8_t length, uint8_t* data)
 {
     uint8_t i, error;
-
 
     Wire.beginTransmission(ADD_AN32183 & 0xFE);
     Wire.write(reg);
     for( i=0; i<length; i++)
         Wire.write(data[i]); 
     error = Wire.endTransmission(true);    // stop transmitting
-    if (error)
+    if (error) 
         Serial.printf("Error i2c %d \r\n", error);
+    return error;
 }
 
 void clear_led(void){
@@ -57,7 +58,12 @@ void init_led(void)
     delay(100);
     
     cmd[0] = 0x01;
-    AN32183_write_cmd(POWERCNT,1,cmd);
+    if(AN32183_write_cmd(POWERCNT,1,cmd))
+    {
+        Serial.println("No led driver");
+        return;
+    }
+
     cmd[0] = _15_mA + 0x01;
     AN32183_write_cmd(MTXON,1,cmd);
 
@@ -75,14 +81,21 @@ void init_led(void)
     AN32183_write_cmd(B1_PWM,9,cmd);
     AN32183_write_cmd(C1_PWM,9,cmd);
     AN32183_write_cmd(D1_PWM,9,cmd);
+    
     //all_led(0x50);
     //delay(2000);
     clear_led();
+    memset(cmd,0x10,5);
+    AN32183_write_cmd(DTC1, 5, cmd);
+    led_enable_flag = true;
 }
 
 void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout)
 {
     uint8_t reg;
+
+    if(!led_enable_flag)
+        return;
 
     //all_led(10);
     reg = DTA1 + x + (y*9);
@@ -94,6 +107,10 @@ void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout)
 void led_rgb(rgb_t color, uint8_t bright)
 {
     uint8_t r,g,b;
+
+    if(!led_enable_flag)
+        return;
+
     if(bright > 8)
         bright = 0;
 
@@ -116,10 +133,11 @@ void update_animation(void)
 {
     static uint8_t inc;
 
-    if (millis() < (previous_millis) + 250)
+    if(!led_enable_flag)
         return;
 
-    
+    if (millis() < (previous_millis) + 250)
+        return;
 
     switch(inc)
     {

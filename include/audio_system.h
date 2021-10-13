@@ -25,9 +25,9 @@ void init_mixer(void);
 void init_audio(void);
 void update_vumetre(void);
 void update_effect(void);
-void init_volume(float Vol_f);
+void init_volume(float Vol_ext);
 
-
+void init_scratch(void);
 
 extern AudioPlayMemory          playMem1;       //xy=170,20
 extern AudioPlayMemory          playMem7; //xy=170,244
@@ -62,7 +62,9 @@ extern AudioEffectReverb        reverb;        //xy=1277.36669921875,606.3667297
 extern AudioAnalyzeRMS          rms1;           //xy=1277.333251953125,941.3333740234375
 extern AudioEffectDelay         delay1;         //xy=1490.36669921875,779.36669921875
 extern AudioMixer4              mixer9; //xy=1491.36669921875,614.36669921875
-extern AudioAmplifier           Volume;           //xy=1712.36669921875,618.3667297363281
-extern AudioOutputI2S           i2s1;           //xy=1837.333251953125,617.3333435058594
-extern AudioAnalyzeRMS          rms2;
+extern AudioAmplifier           Volume;           //xy=1660.36669921875,815.36669921875
+extern AudioOutputI2S           i2s_out;           //xy=1826.333251953125,790.3333740234375
+extern AudioAnalyzeRMS          rms_out; //xy=1827.36669921875,857.36669921875
+extern AudioFilterBiquad        biquad_out;        //xy=1640.0999755859375,766.0999450683594
+
 #endif

@@ -5,7 +5,8 @@ void update_vumetre(void)
     float value;
 
     if (rms1.available()) {
-        value = rms1.read();
+        value = rms1.read() * 30.0;
+        //Serial.print("RMS1 : ");
         //Serial.println(value);
         analogWrite(23, value * 255);
     }
