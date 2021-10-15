@@ -43,7 +43,7 @@ void loop() {
 
     time_start = micros();
     update_button();
-    //update_vumetre(); 
+    update_vumetre(); 
     update_effect();
     update_animation();
     
@@ -89,8 +89,8 @@ void loop() {
                 state_amplifier = false;
             }
         }
-        //Serial.printf("rms2 :");
-        //Serial.println(value);
+        Serial.printf("rms2 :");
+        Serial.println(value);
     }
   
 }

@@ -20,6 +20,9 @@
 #include "audio/AudioSampleChien.h"
 #include "audio/AudioSampleSly.h"
 #include "audio/AudioSampleXylo.h"
+#include "audio/AudioSampleHacienda.h"
+#include "audio/AudioSampleSka.h"
+#include "audio/AudioSampleScratch.h"
 
 void init_mixer(void);
 void init_audio(void);
@@ -47,6 +50,7 @@ extern AudioPlayMemory          playMem8; //xy=174,282
 extern AudioPlayMemory          playMem15; //xy=174,542
 extern AudioPlayMemory          playMem11; //xy=177,395
 extern AudioPlayMemory          playMem13; //xy=178,469
+extern AudioPlayMemory          playMem16; 
 extern AudioMixer4              mixer6; //xy=432,686
 extern AudioMixer4              mixer5; //xy=437,504
 extern AudioMixer4              mixer4; //xy=438,376

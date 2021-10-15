@@ -186,7 +186,7 @@ void update_button(void)
 
     if (loop_bt13 && !(playMem13.isPlaying()))
     {
-        playMem13.play(AudioSampleGong);
+        playMem13.play(AudioSampleHacienda);
         led_button(2, 2, 0xFF, 1000);
     }
     if (!loop_bt13 && (playMem13.isPlaying()))
@@ -197,7 +197,7 @@ void update_button(void)
 
     if (loop_bt14 && !(playMem14.isPlaying()))
     {
-        playMem14.play(AudioSampleGong);
+        playMem14.play(AudioSampleSka);
         led_button(3, 2, 0xFF, 1000);
     }
     if (!loop_bt14 && (playMem14.isPlaying()))

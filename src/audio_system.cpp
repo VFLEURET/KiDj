@@ -23,6 +23,7 @@ AudioPlayMemory          playMemDrum1; //xy=172,651
 AudioPlayMemory          playMemDrum2; //xy=172,689
 AudioPlayMemory          playMem8; //xy=174,282
 AudioPlayMemory          playMem15; //xy=174,542
+AudioPlayMemory          playMem16; //xy=174.10000610351562,577.0999755859375
 AudioPlayMemory          playMem11; //xy=177,395
 AudioPlayMemory          playMem13; //xy=178,469
 AudioMixer4              mixer6; //xy=432,686
@@ -35,6 +36,7 @@ AudioAmplifier           amp_Micro;           //xy=630,1023
 AudioMixer4              mixer7; //xy=653,284
 AudioFilterBiquad        biquad_Micro;        //xy=784,1023
 AudioMixer4              mixer8; //xy=861,416
+AudioAnalyzeRMS          rms_micro; //xy=1012.5999755859375,1011.0999755859375
 AudioMixer4              mixer1;         //xy=1116.333251953125,687.3333435058594
 AudioEffectReverb        reverb;        //xy=1277.36669921875,606.3667297363281
 AudioAnalyzeRMS          rms1;           //xy=1277.333251953125,941.3333740234375
@@ -60,32 +62,32 @@ AudioConnection          patchCord13(playMemDrum1, 0, mixer6, 0);
 AudioConnection          patchCord14(playMemDrum2, 0, mixer6, 1);
 AudioConnection          patchCord15(playMem8, 0, mixer3, 3);
 AudioConnection          patchCord16(playMem15, 0, mixer5, 2);
-AudioConnection          patchCord17(playMem11, 0, mixer4, 2);
-AudioConnection          patchCord18(playMem13, 0, mixer5, 0);
-AudioConnection          patchCord19(mixer6, 0, mixer8, 1);
-AudioConnection          patchCord20(mixer5, 0, mixer7, 3);
-AudioConnection          patchCord21(mixer4, 0, mixer7, 2);
-AudioConnection          patchCord22(mixer3, 0, mixer7, 1);
-AudioConnection          patchCord23(mixer2, 0, mixer7, 0);
-AudioConnection          patchCord24(adc_Micro, amp_Micro);
-AudioConnection          patchCord25(amp_Micro, biquad_Micro);
-AudioConnection          patchCord26(mixer7, 0, mixer8, 0);
-AudioConnection          patchCord27(biquad_Micro, 0, mixer1, 3);
-AudioConnection          patchCord28(mixer8, 0, mixer1, 0);
-AudioConnection          patchCord29(mixer1, rms1);
-AudioConnection          patchCord30(mixer1, reverb);
-AudioConnection          patchCord31(mixer1, 0, mixer9, 1);
-AudioConnection          patchCord32(reverb, 0, mixer9, 0);
-AudioConnection          patchCord33(delay1, 0, mixer9, 3);
-AudioConnection          patchCord34(delay1, 0, biquad_out, 0);
-AudioConnection          patchCord35(mixer9, delay1);
-AudioConnection          patchCord36(biquad_out, Volume);
-AudioConnection          patchCord37(Volume, 0, i2s_out, 0);
-AudioConnection          patchCord38(Volume, 0, i2s_out, 1);
-AudioConnection          patchCord39(Volume, rms_out);
+AudioConnection          patchCord17(playMem16, 0, mixer5, 3);
+AudioConnection          patchCord18(playMem11, 0, mixer4, 2);
+AudioConnection          patchCord19(playMem13, 0, mixer5, 0);
+AudioConnection          patchCord20(mixer6, 0, mixer8, 1);
+AudioConnection          patchCord21(mixer5, 0, mixer7, 3);
+AudioConnection          patchCord22(mixer4, 0, mixer7, 2);
+AudioConnection          patchCord23(mixer3, 0, mixer7, 1);
+AudioConnection          patchCord24(mixer2, 0, mixer7, 0);
+AudioConnection          patchCord25(adc_Micro, amp_Micro);
+AudioConnection          patchCord26(amp_Micro, biquad_Micro);
+AudioConnection          patchCord27(mixer7, 0, mixer8, 0);
+AudioConnection          patchCord28(biquad_Micro, 0, mixer1, 3);
+AudioConnection          patchCord29(biquad_Micro, rms_micro);
+AudioConnection          patchCord30(mixer8, 0, mixer1, 0);
+AudioConnection          patchCord31(mixer1, rms1);
+AudioConnection          patchCord32(mixer1, reverb);
+AudioConnection          patchCord33(mixer1, 0, mixer9, 1);
+AudioConnection          patchCord34(reverb, 0, mixer9, 0);
+AudioConnection          patchCord35(delay1, 0, mixer9, 3);
+AudioConnection          patchCord36(delay1, 0, biquad_out, 0);
+AudioConnection          patchCord37(mixer9, delay1);
+AudioConnection          patchCord38(biquad_out, Volume);
+AudioConnection          patchCord39(Volume, 0, i2s_out, 0);
+AudioConnection          patchCord40(Volume, 0, i2s_out, 1);
+AudioConnection          patchCord41(Volume, rms_out);
 // GUItool: end automatically generated code
-
-
 
 void init_mixer(void)
 {
@@ -143,6 +145,10 @@ void init_audio(void)
     pinMode(23, OUTPUT); //vumetre
     pinMode(33, OUTPUT); //sd ampli
     reverb.reverbTime(0);
+
+    amp_Micro.gain(2.0);
+    biquad_Micro.setHighpass(0, 100, 0.7);
+    biquad_Micro.setLowpass(1, 6000, 0.7);
 
     //enable amplifier
     digitalWrite(33, 1);

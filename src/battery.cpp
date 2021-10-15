@@ -18,7 +18,7 @@ static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
 
 static void fuel_gauge_write(uint8_t reg_add, uint16_t data, uint8_t length)
 {
-    Wire.beginTransmission(FUEL_GAUGE_ADD << 1);
+    Wire.beginTransmission(FUEL_GAUGE_ADD);
     Wire.write(reg_add);
     Wire.write((uint8_t)(data & 0xFF)); 
     if (length > 1)
@@ -28,9 +28,16 @@ static void fuel_gauge_write(uint8_t reg_add, uint16_t data, uint8_t length)
 
 static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length) 
 {
-    uint8_t c1, c2 = 0;
-    Wire.beginTransmission(FUEL_GAUGE_ADD << 1);
+    uint8_t c1, c2 = 0, error;
+    Wire.beginTransmission(FUEL_GAUGE_ADD);
     Wire.write(reg_add);
+    error = Wire.endTransmission(true);    // stop transmitting
+    if (error){ 
+        Serial.printf("Error i2c %d \r\n", error);
+        return 0;
+    }
+    Wire.requestFrom(FUEL_GAUGE_ADD, length);
+    if(Wire.available() == length);
     c1 = Wire.read();
     if (length > 1)
         c2 = Wire.read();
