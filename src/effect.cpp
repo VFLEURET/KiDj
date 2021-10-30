@@ -1,4 +1,5 @@
 #include "audio_system.h"
+#include "debug.h"
 
 elapsedMillis timeout_effect;
 
@@ -18,7 +19,7 @@ void update_effect(void)
         feedback = 0.01;
         if(feedback != previous_delay) {
             mixer9.gain(3, feedback);
-            Serial.printf("Delay %d\r\n", feedback);
+            DEBUG_PRINTF("Delay %d\r\n", feedback);
             previous_delay = feedback;
         }
 
@@ -28,7 +29,7 @@ void update_effect(void)
         feedback = 0.01;
         if(feedback != previous_reverb) {
             reverb.reverbTime(feedback);
-            Serial.printf("reverb %d\r\n", feedback);
+            DEBUG_PRINTF("reverb %d\r\n", feedback);
             previous_reverb = feedback;
         }
         timeout_effect = 0;

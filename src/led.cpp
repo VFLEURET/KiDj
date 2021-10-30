@@ -2,6 +2,7 @@
 #include <Wire.h>
 
 #include "led.h"
+#include "debug.h"
 
 #define ADD_AN32183 0x5C
 #define LED_EN 35
@@ -19,7 +20,7 @@ uint8_t AN32183_write_cmd(uint8_t reg, uint8_t length, uint8_t* data)
         Wire.write(data[i]); 
     error = Wire.endTransmission(true);    // stop transmitting
     if (error) 
-        Serial.printf("Error i2c %d \r\n", error);
+        DEBUG_PRINTF("Error i2c %d \r\n", error);
     return error;
 }
 
@@ -60,7 +61,7 @@ void init_led(void)
     cmd[0] = 0x01;
     if(AN32183_write_cmd(POWERCNT,1,cmd))
     {
-        Serial.println("No led driver");
+        DEBUG_PRINTLN("No led driver");
         return;
     }
 

@@ -3,6 +3,7 @@
 #include <Wire.h>
 
 #include "audio_system.h"
+#include "debug.h"
 
 #define PIX_INT     0
 #define PIX_ADDR    0x75
@@ -32,7 +33,7 @@ uint8_t pix_read(uint8_t reg)
     Wire.write(reg);
     error = Wire.endTransmission(true);    // stop transmitting
     if (error){ 
-        Serial.printf("Error i2c %d \r\n", error);
+        DEBUG_PRINTF("Error i2c %d \r\n", error);
         pix_flag = false;
         return 0;
     }
@@ -41,7 +42,7 @@ uint8_t pix_read(uint8_t reg)
         c = Wire.read(); 
     error = Wire.endTransmission(true);    // stop transmitting
     if (error){ 
-        Serial.printf("Error i2c %d \r\n", error);
+        DEBUG_PRINTF("Error i2c %d \r\n", error);
         return 0;
     }
     pix_flag = true;
@@ -52,7 +53,7 @@ uint8_t pix_read(uint8_t reg)
 void init_scratch(void)
 {
     pinMode(PIX_INT, INPUT_PULLUP);
-    Serial.printf("PIX_ID 0x%02X 0x%02X \r\n ", pix_read(0x00), pix_read(0x01));
+    DEBUG_PRINTF("PIX_ID 0x%02X 0x%02X \r\n ", pix_read(0x00), pix_read(0x01));
     if (pix_flag == false)
         return;
     pix_write(RES_X, 0x09);
@@ -80,7 +81,7 @@ void encode_scratch(void)
             roth |= 0xf000;
         }
         rotl = rotl | roth;
-        Serial.printf(" Rot : %i\r\n", rotl);
+        DEBUG_PRINTF(" Rot : %i\r\n", rotl);
         if (rotl > 5)
         {
             if ((playMem16.isPlaying() && direction == 1) ||
@@ -88,7 +89,7 @@ void encode_scratch(void)
             {
 
                 position = playMem16.positionMillis();
-                //Serial.printf("Play norm to %d%d \r\n", position, direction);
+                //DEBUG_PRINTF("Play norm to %d%d \r\n", position, direction);
                 playMem16.stop();
                 playMem16.play(AudioSampleScratch_norm + position);
                 direction = 0;
@@ -105,7 +106,7 @@ void encode_scratch(void)
                (!playMem16.isPlaying()))
             {
                 position = playMem16.positionMillis();
-                //Serial.printf("Play inv to %d %d\r\n", position, direction);
+                //DEBUG_PRINTF("Play inv to %d %d\r\n", position, direction);
                 playMem16.stop();
                 playMem16.play(AudioSampleScratch_inv + position);
                 direction = 1;

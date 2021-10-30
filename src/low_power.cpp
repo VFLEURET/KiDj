@@ -1,9 +1,12 @@
 #include <Audio.h>
+#include "debug.h"
 
 void goto_sleep(void)
 {
-    Serial.println("Go to sleep \r\n\r\n\r\n\r\n\r\n\r\n\r\n");
+    DEBUG_PRINTLN("Go to sleep \r\n\r\n\r\n\r\n\r\n\r\n\r\n");
     Serial.flush();
     Serial.end();
-    delay(2000);
+    pinMode(38, OUTPUT);
+    digitalWrite(38, false);
+    delay(6000);
 }

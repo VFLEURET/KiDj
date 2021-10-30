@@ -3,6 +3,7 @@
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
+#include "debug.h"
 
 #include "audio_system.h"
 
@@ -151,9 +152,6 @@ void init_audio(void)
     amp_Micro.gain(0.0);
     biquad_Micro.setHighpass(0, 100, 0.7);
     biquad_Micro.setLowpass(1, 6000, 0.7);
-
-    //enable amplifier
-    digitalWrite(33, 1);
 }
 
 #define ENCA 16
@@ -172,8 +170,8 @@ void init_volume(float Vol_ext)
     pinMode(ENCB, INPUT_PULLUP);
     attachInterrupt(ENCA, encoderA, CHANGE);
     attachInterrupt(ENCB, encoderB, CHANGE);
-    Serial.print("Vol : ");
-    Serial.println(Vol_f);
+    DEBUG_PRINT("Vol : ");
+    DEBUG_PRINTLN(Vol_f);
 }
 
 #define DEBOUNCE_ENC 3
@@ -198,8 +196,8 @@ static void encoderA(void) {
     if (change_value)
     {
         Volume.gain(Vol_f);
-        Serial.print("New vol : ");
-        Serial.println(Vol_f);
+        DEBUG_PRINT("New vol : ");
+        DEBUG_PRINTLN(Vol_f);
         timeout_sleep = 0;
     }
 
@@ -223,8 +221,8 @@ static void encoderB(void) {
     if (change_value)
     {
         Volume.gain(Vol_f);
-        Serial.print("New vol : ");
-        Serial.println(Vol_f);
+        DEBUG_PRINT("New vol : ");
+        DEBUG_PRINTLN(Vol_f);
         timeout_sleep = 0;
     }
 }
@@ -270,7 +268,7 @@ static bool encoder_inc(void)
 
     }
 
-    //Serial.printf("0x%02X 0x%02X 0x%02X\r\n", current_encoder_logic_status, previous_encoder_logic_status, (current_encoder_logic_status<<2) + previous_encoder_logic_status );
+    //DEBUG_PRINTF("0x%02X 0x%02X 0x%02X\r\n", current_encoder_logic_status, previous_encoder_logic_status, (current_encoder_logic_status<<2) + previous_encoder_logic_status );
 
     previous_encoder_logic_status = current_encoder_logic_status;
 

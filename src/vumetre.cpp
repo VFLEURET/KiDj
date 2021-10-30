@@ -14,8 +14,8 @@ void update_vumetre(void)
                 value = 0xFF;
             if (value < 10)
                 value = 0;
-            //Serial.print("RMS1 : ");
-            //Serial.println(value);
+            //DEBUG_PRINT("RMS1 : ");
+            //DEBUG_PRINTln(value);
             analogWrite(23, uint8_t(value));
         }
         timeout_Vu = 0;
