@@ -33,18 +33,18 @@
 #define FUEL_GAUGE_ADD (uint8_t)(0x36)
 
 #define ModelCfg        0x0400
-#define DesignCap       0x1E00
-#define FullCapNom      0x1E00
-#define FullCapRep      0x26AF
+#define DesignCap       0x0C80
+#define FullCapNom      0x0C80
+#define FullCapRep      0x0C80
 #define FullSocThr      0x5F00
 #define IChgTerm        0x0300
-#define LearnCfg        0x44B6
-#define QRTable00       0x1050
-#define QRTable10       0x2013
-#define QRTable20       0x0199
-#define QRTable30       0x0A7F
-#define RComp0          0x0700
-#define TempCo          0x223E
+#define LearnCfg        0x4496
+#define QRTable00       0x0400
+#define QRTable10       0x0000
+#define QRTable20       0x810B
+#define QRTable30       0x7FFF
+#define RComp0          0x0380
+#define TempCo          0x263E
 #define VEmpty          0xA561
 #define Config2         0x3658
 

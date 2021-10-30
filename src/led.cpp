@@ -6,7 +6,7 @@
 #define ADD_AN32183 0x5C
 #define LED_EN 35
 
-static uint32_t previous_millis;
+static uint32_t next_timeout;
 static bool led_enable_flag = false;
 
 uint8_t AN32183_write_cmd(uint8_t reg, uint8_t length, uint8_t* data)
@@ -75,15 +75,15 @@ void init_led(void)
 //    AN32183_write_cmd(SCANSET,1,cmd);
     
     //memset(cmd,0xA7,9); //10mA ans 0.888 x T
-    memset(cmd,0x21,9); //4mA ans 0.333 x T
+    memset(cmd,0xA1,9); //20mA ans 0.333 x T
     //memset(cmd,0x10,9); //4mA ans 0.333 x T
     AN32183_write_cmd(A1_PWM,9,cmd);
     AN32183_write_cmd(B1_PWM,9,cmd);
     AN32183_write_cmd(C1_PWM,9,cmd);
     AN32183_write_cmd(D1_PWM,9,cmd);
     
-    //all_led(0x50);
-    //delay(2000);
+    all_led(0x50);
+    delay(2000);
     clear_led();
     memset(cmd,0x10,5);
     AN32183_write_cmd(DTC1, 5, cmd);
@@ -97,11 +97,13 @@ void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout)
     if(!led_enable_flag)
         return;
 
-    //all_led(10);
+    if(x > 5)
+        return;
+    if(y > 3)
+        return;
     reg = DTA1 + x + (y*9);
     AN32183_write_cmd(reg, 1, &bright);
-    //Serial.println(reg);
-    previous_millis = millis() + timeout;    
+    next_timeout = millis() + timeout;    
 }
 
 void led_rgb(rgb_t color, uint8_t bright)
@@ -112,7 +114,7 @@ void led_rgb(rgb_t color, uint8_t bright)
         return;
 
     if(bright > 8)
-        bright = 0;
+        bright = 8;
 
     r = color.red >> bright;
     g = color.blue >> bright;
@@ -123,11 +125,13 @@ void led_rgb(rgb_t color, uint8_t bright)
 }
 
 //uint8_t sweep[] = {1, 2, 3, 4, 6, 8, 10, 15, 20, 30, 40, 60, 60, 40, 30, 20, 15, 10, 8, 6, 4, 3, 2, 1};
-uint8_t sweep[5][5] = {{255,100,50,20,10},
+uint8_t sweep[6][5] = {{255,100,50,20,10},
                         {100,255,100,50,20},
                         {50,100,255,100,50},
                         {20,50,100,255,100},
-                        {10,20,50,100,255}};
+                        {10,20,50,100,255},
+                        {10,10,20,50,100},
+                        };
 
 void update_animation(void)
 {
@@ -136,26 +140,30 @@ void update_animation(void)
     if(!led_enable_flag)
         return;
 
-    if (millis() < (previous_millis) + 250)
+    if (millis() < (next_timeout) + 250)
         return;
 
     switch(inc)
     {
-        case 0 ... 2 :
+        case 0 ... 3 :
         //case 1 :
         //case 2 :
             AN32183_write_cmd(DTA1, 5, sweep[inc]);
             AN32183_write_cmd(DTB1, 5, sweep[inc+1]);
+            led_button(0, 3, 0xFF, 0);
+            led_button(1, 3, 0xFF, 0);
             //AN32183_write_cmd(DTC1, 5, sweep[inc+2]);
             inc ++;
         break;
-        case 3 :
+        case 4 :
             AN32183_write_cmd(DTA1, 5, sweep[inc]);
             AN32183_write_cmd(DTB1, 5, sweep[inc+1]);
             //AN32183_write_cmd(DTC1, 5, sweep[0]);
+            led_button(0, 3, 0x0, 0);
+            led_button(1, 3, 0x0, 0);
             inc ++;
         break;
-        case 4 :
+        case 5 :
             AN32183_write_cmd(DTA1, 5, sweep[inc]);
             AN32183_write_cmd(DTB1, 5, sweep[0]);
             //AN32183_write_cmd(DTC1, 5, sweep[1]);
@@ -167,7 +175,7 @@ void update_animation(void)
 
     }
 
-    previous_millis = millis();
+    next_timeout = millis();
 }
 
 void led_state(led_state_t new_state)

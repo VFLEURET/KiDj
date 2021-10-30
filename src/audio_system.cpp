@@ -6,6 +6,8 @@
 
 #include "audio_system.h"
 
+elapsedMillis timeout_sleep; 
+
 // GUItool: begin automatically generated code
 AudioPlayMemory          playMem1;       //xy=170,20
 AudioPlayMemory          playMem7; //xy=170,244
@@ -146,7 +148,7 @@ void init_audio(void)
     pinMode(33, OUTPUT); //sd ampli
     reverb.reverbTime(0);
 
-    amp_Micro.gain(2.0);
+    amp_Micro.gain(0.0);
     biquad_Micro.setHighpass(0, 100, 0.7);
     biquad_Micro.setLowpass(1, 6000, 0.7);
 
@@ -198,6 +200,7 @@ static void encoderA(void) {
         Volume.gain(Vol_f);
         Serial.print("New vol : ");
         Serial.println(Vol_f);
+        timeout_sleep = 0;
     }
 
 }
@@ -222,6 +225,7 @@ static void encoderB(void) {
         Volume.gain(Vol_f);
         Serial.print("New vol : ");
         Serial.println(Vol_f);
+        timeout_sleep = 0;
     }
 }
 
@@ -246,7 +250,7 @@ static bool encoder_inc(void)
         case 0x0A :
         case 0x0C :
         case 0x0F :
-            break;
+                break;
 
         // CW
         case 0x02 :

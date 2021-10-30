@@ -23,10 +23,6 @@ Bounce button13 = Bounce(6, DEBOUNCE_TIME);
 Bounce button14 = Bounce(5, DEBOUNCE_TIME); 
 Bounce button15 = Bounce(4, DEBOUNCE_TIME);  
 
-Bounce DRUM1 = Bounce(3, DEBOUNCE_TIME); 
-Bounce DRUM2 = Bounce(2, DEBOUNCE_TIME); 
-Bounce DRUM3 = Bounce(1, DEBOUNCE_TIME);  
-
 Bounce bt_Play = Bounce(9, DEBOUNCE_TIME); 
 Bounce bt_Rec = Bounce(25, DEBOUNCE_TIME);
 
@@ -35,10 +31,6 @@ bool loop_bt11, loop_bt12, loop_bt13, loop_bt14, loop_bt15;
 
 void init_button(void)
 {
-    pinMode(1, INPUT_PULLUP);
-    pinMode(2, INPUT_PULLUP);
-    pinMode(3, INPUT_PULLUP);
-
     pinMode(30, INPUT_PULLUP);
     pinMode(29, INPUT_PULLUP);
     pinMode(28, INPUT_PULLUP);
@@ -80,59 +72,65 @@ void update_button(void)
     bt_Play.update();
     bt_Rec.update();
 
-    DRUM1.update();
-    DRUM2.update();
-    DRUM3.update();
-
     if(button1.fallingEdge())
     {
         playMem1.play(AudioSampleVache);
         led_button(0, 0, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button2.fallingEdge())
     {
         playMem2.play(AudioSampleChien);
         led_button(1, 0, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button3.fallingEdge())
     {
         playMem3.play(AudioSampleChat);
         led_button(2, 0, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button4.fallingEdge())
     {
         playMem4.play(AudioSampleApplau);
         led_button(3, 0, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button5.fallingEdge())
     {
-        playMem5.play(AudioSampleGong);
-        led_button(4, 0, 0xFF, 2000);
+        playMem5.play(AudioSampleHakuna);
+        led_button(4, 0, 0xFF, 5000);
+        timeout_sleep = 0;
     }
     if(button6.fallingEdge())
     {
-        playMem6.play(AudioSampleGong);
+        playMem6.play(AudioSampleMixedbrasshitwa);
         led_button(0, 1, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button7.fallingEdge())
     {
-        playMem7.play(AudioSampleGong);
-        led_button(1, 1, 0xFF, 2000);
+        playMem7.play(AudioSampleNoelie);
+        led_button(1, 1, 0xFF, 1000);
+        timeout_sleep = 0;
     }
     if(button8.fallingEdge())
     {
         playMem8.play(AudioSampleGong);
         led_button(2, 1, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button9.fallingEdge())
     {
         playMem9.play(AudioSampleGong);
         led_button(3, 1, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button10.fallingEdge())
     {
         playMem10.play(AudioSampleGong);
         led_button(4, 1, 0xFF, 2000);
+        timeout_sleep = 0;
     }
     if(button11.fallingEdge())
     {
@@ -153,19 +151,13 @@ void update_button(void)
     if(button15.fallingEdge())
     {
         loop_bt15 = !loop_bt15;
-    }
-    
-    if(DRUM1.fallingEdge())
-        playMemDrum1.play(AudioSampleSnare);
-    if(DRUM2.fallingEdge())
-        playMemDrum1.play(AudioSampleTomtom);
-    if(DRUM3.fallingEdge())
-        playMemDrum1.play(AudioSampleHihat);                
+    }           
 
     if (loop_bt11 && !(playMem11.isPlaying()))
     {
         playMem11.play(AudioSampleSly);
         led_button(0, 2, 0xFF, 1000);
+        timeout_sleep = 0;
     }
     if (!loop_bt11 && (playMem11.isPlaying()))
     {
@@ -177,17 +169,20 @@ void update_button(void)
     {
         playMem12.play(AudioSampleXylo);
         led_button(1, 2, 0xFF, 1000);
+        timeout_sleep = 0;
     }
     if (!loop_bt12 && (playMem12.isPlaying()))
     {
         playMem12.stop();
         led_button(1, 2, 0x10, 1000);
+        timeout_sleep = 0;
     }
 
     if (loop_bt13 && !(playMem13.isPlaying()))
     {
         playMem13.play(AudioSampleHacienda);
         led_button(2, 2, 0xFF, 1000);
+        timeout_sleep = 0;
     }
     if (!loop_bt13 && (playMem13.isPlaying()))
     {
@@ -199,17 +194,20 @@ void update_button(void)
     {
         playMem14.play(AudioSampleSka);
         led_button(3, 2, 0xFF, 1000);
+        timeout_sleep = 0;
     }
     if (!loop_bt14 && (playMem14.isPlaying()))
     {
         playMem14.stop();
         led_button(3, 2, 0x10, 1000);
+        timeout_sleep = 0;
     }
 
     if (loop_bt15 && !(playMem15.isPlaying()))
     {
-        playMem15.play(AudioSampleGong);
+        playMem15.play(AudioSampleScratch_norm);
         led_button(4, 2, 0xFF, 1000);
+        timeout_sleep = 0;
     }
     if (!loop_bt15 && (playMem15.isPlaying()))
     {

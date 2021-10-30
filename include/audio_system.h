@@ -23,14 +23,24 @@
 #include "audio/AudioSampleHacienda.h"
 #include "audio/AudioSampleSka.h"
 #include "audio/AudioSampleScratch.h"
+#include "audio/AudioSampleHakuna.h"
+#include "audio/AudioSampleScratch_inv.h"
+#include "audio/AudioSampleScratch_norm.h"
+#include "audio/AudioSampleMixedbrasshitwa.h"
+#include "audio/AudioSampleNoelie.h"
 
 void init_mixer(void);
 void init_audio(void);
 void update_vumetre(void);
 void update_effect(void);
+void init_drum(void);
+
 void init_volume(float Vol_ext);
 
 void init_scratch(void);
+void update_scratch(void);
+
+extern elapsedMillis timeout_sleep; 
 
 extern AudioPlayMemory          playMem1;       //xy=170,20
 extern AudioPlayMemory          playMem7; //xy=170,244

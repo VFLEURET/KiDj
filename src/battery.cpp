@@ -4,26 +4,42 @@
 #include "battery.h"
 #include "led.h"
 
-#define ACOK 34
+static bool fuel_flag = false;
+static bool charger_flag = false;
+
+#define ACOK 36
 
 static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
 {
-    Wire.beginTransmission(CHARGER_ADD << 1);
+    uint8_t error;
+
+    Wire.beginTransmission(CHARGER_ADD);
     Wire.write(reg_add);
     Wire.write((uint8_t)(data & 0xFF)); 
     if (length > 1)
         Wire.write((uint8_t)(data >> 8)); 
-    Wire.endTransmission();    // stop transmitting
+    error = Wire.endTransmission(true);    // stop transmitting
+    if (error){ 
+        fuel_flag = false;
+        Serial.printf("Error i2c charger write %d %d \r\n", reg_add, error);
+    }
+    else
+        fuel_flag = true;
 }
 
 static void fuel_gauge_write(uint8_t reg_add, uint16_t data, uint8_t length)
 {
+    uint8_t error;
+
     Wire.beginTransmission(FUEL_GAUGE_ADD);
     Wire.write(reg_add);
     Wire.write((uint8_t)(data & 0xFF)); 
     if (length > 1)
         Wire.write((uint8_t)(data >> 8)); 
-    Wire.endTransmission();    // stop transmitting  
+    error = Wire.endTransmission(true);    // stop transmitting
+    if (error){ 
+        Serial.printf("Error i2c fuel write %d %d \r\n", reg_add, error);
+    }
 }
 
 static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length) 
@@ -33,7 +49,8 @@ static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length)
     Wire.write(reg_add);
     error = Wire.endTransmission(true);    // stop transmitting
     if (error){ 
-        Serial.printf("Error i2c %d \r\n", error);
+        fuel_flag = false;
+        Serial.printf("Error fuel read i2c %d \r\n", error);
         return 0;
     }
     Wire.requestFrom(FUEL_GAUGE_ADD, length);
@@ -42,13 +59,22 @@ static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length)
     if (length > 1)
         c2 = Wire.read();
     Wire.endTransmission();    // stop transmitting  
+    fuel_flag = true;
 	return (c1 + (c2 << 8));
 }
 
 
 void init_charger(void) {
 
+
+    pinMode(ACOK, INPUT_PULLUP);
+
     charger_write(CHARGE_OPTION0_ADRR, 0x8202, 2);
+    if (charger_flag == false)
+    {
+        Serial.println("No charger");
+        return;
+    }
     charger_write(CHARGE_OPTION1_ADRR, 0x0211, 2);
     charger_write(MAX_CHARGE_VOLT_ADRR, 8400, 2);
     charger_write(MIN_SYSTEM_VOLT_ADRR, (6200 >> 8) & 0xFF, 1);
@@ -61,6 +87,11 @@ void init_fuel(void) {
     uint16_t HibCFG, Status;
 
     HibCFG = fuel_gauge_read(0xBA, 2);  //Store original HibCFG value
+
+    if (fuel_flag == false) {
+        Serial.println("No fuel gauge");
+        return;
+    }
 
     fuel_gauge_write(0x60, 0x90, 1); // Exit Hibernate Mode step 1
     fuel_gauge_write(0xBA, 0x00, 1);  // Exit Hibernate Mode step 2
@@ -94,6 +125,9 @@ void init_fuel(void) {
 }
 
 void update_fuel(bool print_flag) {
+
+    if (fuel_flag == false)
+        return;
     uint16_t buffer, volt, Temp, capa, soc;
     int16_t current;
     static uint16_t previous_status, previous_cap, previous_SOC, previous_Volt, previous_Temp;
@@ -114,10 +148,10 @@ void update_fuel(bool print_flag) {
       //info_charger();
     }
 
-    //volt = (fuel_gauge_read(0x19, 2) >> 7 ) & 0x1FF;
+    volt = (fuel_gauge_read(0x19, 2) >> 7 ) & 0x1FF;
     current = (int16_t)(fuel_gauge_read(0x0A, 2))/8;
     //Temp = (fuel_gauge_read(0x16, 2) >> 8) & 0xFF;
-    //capa = fuel_gauge_read(0x05, 2);
+    capa = fuel_gauge_read(0x05, 2);
     soc = (fuel_gauge_read(0x06, 2) >> 8) & 0xFF;
     if ((volt != previous_Volt) ||
         (current != previous_Current) ||
