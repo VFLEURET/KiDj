@@ -33,7 +33,7 @@ uint8_t pix_read(uint8_t reg)
     Wire.write(reg);
     error = Wire.endTransmission(true);    // stop transmitting
     if (error){ 
-        DEBUG_PRINTF("Error i2c %d \r\n", error);
+        DEBUG_PRINTF("Error i2c pix R %d \r\n", error);
         pix_flag = false;
         return 0;
     }
@@ -42,7 +42,7 @@ uint8_t pix_read(uint8_t reg)
         c = Wire.read(); 
     error = Wire.endTransmission(true);    // stop transmitting
     if (error){ 
-        DEBUG_PRINTF("Error i2c %d \r\n", error);
+        DEBUG_PRINTF("Error i2c %d pix R\r\n", error);
         return 0;
     }
     pix_flag = true;
@@ -105,7 +105,7 @@ void encode_scratch(void)
             if ((playMem16.isPlaying() && direction == 0) ||
                (!playMem16.isPlaying()))
             {
-                position = playMem16.positionMillis();
+                position = (sizeof(AudioSampleScratch_norm) / sizeof(AudioSampleScratch_norm[0])) - playMem16.positionMillis();
                 //DEBUG_PRINTF("Play inv to %d %d\r\n", position, direction);
                 playMem16.stop();
                 playMem16.play(AudioSampleScratch_inv + position);

@@ -7,6 +7,9 @@ void goto_sleep(void)
     Serial.flush();
     Serial.end();
     pinMode(38, OUTPUT);
-    digitalWrite(38, false);
-    delay(6000);
+    digitalWrite(33, false); //disable amplifier
+    digitalWrite(35, false);
+    //digitalWrite(38, true);
+    delay(5000);
+    //digitalWrite(38, true);
 }

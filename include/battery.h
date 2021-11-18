@@ -3,6 +3,8 @@
 
 #define CHARGER_ADD (uint8_t)(0x6A)
 
+#define ACOK 36
+
 #define CHARGE_OPTION0_ADRR         0x00
 #define CHARGE_OPTION0_LENGTH       (2)
 

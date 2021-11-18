@@ -1,6 +1,7 @@
 #include <Audio.h>
 #include <Wire.h>
 
+#include "audio_system.h"
 #include "battery.h"
 #include "led.h"
 #include "debug.h"
@@ -8,7 +9,9 @@
 static bool fuel_flag = false;
 static bool charger_flag = false;
 
-#define ACOK 36
+#define FUEL_GAUGE_ADD (uint8_t)(0x36)
+#define CHARGER_ADD (uint8_t)(0x6A)
+
 
 static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
 {
@@ -26,6 +29,27 @@ static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
     }
     else
         charger_flag = true;
+}
+
+static uint16_t charger_read(uint8_t reg_add) {
+    uint8_t error;
+	uint16_t data, c1, c2;
+    
+    Wire.beginTransmission(CHARGER_ADD);
+    Wire.write(reg_add);
+        error = Wire.endTransmission(true);    // stop transmitting
+    if (error){ 
+        fuel_flag = false;
+        DEBUG_PRINTF("Error charger read i2c %d \r\n", error);
+        return 0;
+    }
+    Wire.requestFrom(CHARGER_ADD, 2);
+    if(Wire.available() == 2);
+        c1 = Wire.read();
+        c2 = Wire.read();
+    Wire.endTransmission();    // stop transmitting  
+
+	return (((c2 & 0x00FF) << 8) + (c1 & 0x00FF));
 }
 
 static void fuel_gauge_write(uint8_t reg_add, uint16_t data, uint8_t length)
@@ -69,18 +93,18 @@ void init_charger(void) {
 
 
     pinMode(ACOK, INPUT_PULLUP);
-
-    charger_write(CHARGE_OPTION0_ADRR, 0x8202, 2);
+    charger_write(CHARGE_OPTION0_ADRR, 0x8302, 2);
     if (charger_flag == false)
     {
         DEBUG_PRINTLN("No charger");
         return;
     }
     charger_write(CHARGE_OPTION1_ADRR, 0x0211, 2);
-    charger_write(MAX_CHARGE_VOLT_ADRR, 8400, 2);
-    charger_write(MIN_SYSTEM_VOLT_ADRR, (6200 >> 8) & 0xFF, 1);
-    charger_write(CHARGE_CURRENT_ADRR, 1000, 2);
-    charger_write(INPUT_CURRENT_ADRR, (2500 >>6), 1);
+    charger_write(CHARGE_OPTION2_ADRR, 0x0000, 2);
+    charger_write(MAX_CHARGE_VOLT_ADRR, 4400, 2);
+    charger_write(MIN_SYSTEM_VOLT_ADRR, (3100 >> 8) & 0xFF, 1);
+    charger_write(CHARGE_CURRENT_ADRR, 1000 * 1.2, 2);
+    charger_write(INPUT_CURRENT_ADRR, ((int)(1000 * 1.2) >>6), 1);
     //info();
 }
 
@@ -89,10 +113,10 @@ void init_fuel(void) {
 
     HibCFG = fuel_gauge_read(0xBA, 2);  //Store original HibCFG value
 
-    if (fuel_flag == false) {
-        DEBUG_PRINTLN("No fuel gauge");
-        return;
-    }
+//    if (fuel_flag == false) {
+//        DEBUG_PRINTLN("No fuel gauge");
+//        return;
+//    }
 
     fuel_gauge_write(0x60, 0x90, 1); // Exit Hibernate Mode step 1
     fuel_gauge_write(0xBA, 0x00, 1);  // Exit Hibernate Mode step 2
@@ -125,6 +149,29 @@ void init_fuel(void) {
     fuel_gauge_write(0x00, Status, 2);
 }
 
+void info_charger(void) {
+    uint16_t data;
+
+    data = charger_read(CHARGE_OPTION0_ADRR);
+    DEBUG_PRINTF("\r\n- Option0 : 0x%04X\r\n", data);
+    data = charger_read(CHARGE_OPTION1_ADRR);
+    DEBUG_PRINTF("- Option1 : 0x%04X\r\n", data);
+    data = charger_read(CHARGE_OPTION2_ADRR);
+    DEBUG_PRINTF("- Option2 : 0x%04X\r\n", data);
+    // data = charger_read(PROCHOT_OPTION0_ADRR);
+    // DEBUG_PRINTF("- PROCHOT0 : 0x%04X\r\n", data);
+    // data = charger_read(PROCHOT_OPTION1_ADRR);
+    // DEBUG_PRINTF("- PROCHOT1 : 0x%04X\r\n", data);
+    data = charger_read(CHARGE_CURRENT_ADRR);
+    DEBUG_PRINTF("- charge_current : %d mA %04X\r\n", data, data);
+    data = charger_read(MAX_CHARGE_VOLT_ADRR);
+    DEBUG_PRINTF("- max voltage : %d mV %04X\r\n", data, data);
+    data = charger_read(MIN_SYSTEM_VOLT_ADRR);
+    DEBUG_PRINTF("- min system voltage : %d mV %04X\r\n", (data & 0xFF) << 8, data);
+    data = charger_read(INPUT_CURRENT_ADRR);
+    DEBUG_PRINTF("- input current : %d mA %04X\r\n", (data & 0xFF) << 6, data);
+}
+
 void update_fuel(bool print_flag) {
 
     if (fuel_flag == false)
@@ -142,11 +189,13 @@ void update_fuel(bool print_flag) {
     //     console_printf("Fuel gauge status 0x%04X\r\n", buffer >> 1);
     // }
     state_charger = digitalRead(ACOK);
+    if (state_charger)
+        timeout_sleep = 0;
     if (state_charger != previous_state_charger) {
         DEBUG_PRINTF("state change %d\r\n", state_charger);
         previous_state_charger = state_charger;
         init_charger();
-        //info_charger();
+        info_charger();
     }
 
     volt = (fuel_gauge_read(0x19, 2) >> 7 ) & 0x1FF;
@@ -174,7 +223,7 @@ void update_fuel(bool print_flag) {
           led_state(PSU_BATT_LED);
 
         if (print_flag)
-          DEBUG_PRINTF("Fuel gauge : %d0mV %dmA %d%%\r\n", volt, current, soc);
+          DEBUG_PRINTF("Fuel gauge : %d0mV %dmA %d%% %dmAh\r\n", volt, current, soc, capa);
 //          DEBUG_PRINT("Fuel gauge : %d0mV %dmA %d*C %dmAh %d%%\r\n", volt, current, Temp, capa, soc);
     }
 }

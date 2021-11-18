@@ -20,7 +20,7 @@ uint8_t AN32183_write_cmd(uint8_t reg, uint8_t length, uint8_t* data)
         Wire.write(data[i]); 
     error = Wire.endTransmission(true);    // stop transmitting
     if (error) 
-        DEBUG_PRINTF("Error i2c %d \r\n", error);
+        DEBUG_PRINTF("Error i2c led %d \r\n", error);
     return error;
 }
 

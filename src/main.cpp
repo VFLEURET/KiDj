@@ -1,5 +1,4 @@
 // Kidj V1.0
-
 #include <Audio.h>
 
 #include "audio_system.h"
@@ -14,14 +13,16 @@
 #define TIMEOUT_SLEEP_TIME 20000
 
 void setup() {
+    digitalWrite(38, false);
+    pinMode(38, OUTPUT_OPENDRAIN);
     #ifdef DEBUG
     Serial.begin(115200);
     #endif
     DEBUG_PRINTLN("Bonjour KiDj");
     pinMode(DEBUG_PIN, OUTPUT);
+    init_led();
     init_charger();
     init_fuel();
-    init_led();
     init_volume(0.8);
     init_button();
     init_mixer();
@@ -55,18 +56,24 @@ void loop()
     update_scratch();
     
     if (timeout_sleep > TIMEOUT_SLEEP_TIME)
-        goto_sleep();
+    {
+        //goto_sleep();
+        timeout_sleep = 0;
+    }
+
     
     time_function = micros() - time_start;
 
     if (timeout_printf > 1000) 
     {
         timeout_printf = 0;
-        DEBUG_PRINT("Memory usage :");
-        DEBUG_PRINT(AudioMemoryUsageMax());
-        DEBUG_PRINT(" Time function :");
-        DEBUG_PRINT(time_function);
-        DEBUG_PRINTLN("us");
+       // DEBUG_PRINT("timeout to sleep :");
+       // DEBUG_PRINT(timeout_sleep);
+       // DEBUG_PRINT(" Memory usage :");
+       // DEBUG_PRINT(AudioMemoryUsageMax());
+       // DEBUG_PRINT(" Time function :");
+       // DEBUG_PRINT(time_function);
+       // DEBUG_PRINTLN("us");
         update_fuel(1);
     } 
 
