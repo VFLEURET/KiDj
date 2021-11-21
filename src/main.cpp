@@ -20,13 +20,13 @@ void setup() {
     #endif
     DEBUG_PRINTLN("Bonjour KiDj");
     pinMode(DEBUG_PIN, OUTPUT);
+    init_audio();
     init_led();
     init_charger();
     init_fuel();
     init_volume(0.8);
     init_button();
     init_mixer();
-    init_audio();
     init_scratch();
     init_drum();
     DEBUG_PRINTLN("go to loop");
@@ -67,39 +67,39 @@ void loop()
     if (timeout_printf > 1000) 
     {
         timeout_printf = 0;
-       // DEBUG_PRINT("timeout to sleep :");
-       // DEBUG_PRINT(timeout_sleep);
-       // DEBUG_PRINT(" Memory usage :");
-       // DEBUG_PRINT(AudioMemoryUsageMax());
-       // DEBUG_PRINT(" Time function :");
-       // DEBUG_PRINT(time_function);
-       // DEBUG_PRINTLN("us");
+        DEBUG_PRINT("timeout to sleep :");
+        DEBUG_PRINT(timeout_sleep);
+        DEBUG_PRINT(" Memory usage :");
+        DEBUG_PRINT(AudioMemoryUsageMax());
+        DEBUG_PRINT(" Time function :");
+        DEBUG_PRINT(time_function);
+        DEBUG_PRINTLN("us");
         update_fuel(1);
     } 
 
-    if (rms_out.available() && (timeout_amp > DEFAULT_TIMEOUT)) 
-    {
-        value = rms_out.read() * 10.0;
-        if(value > 0.0) {
-            timeout_amp = 0;
-            if (!state_amplifier)
-            {
-                digitalWrite(33, 1); //enable amplifier
-                DEBUG_PRINTLN("RMS >0, start amplifier : ");
-                DEBUG_PRINTF("rms2 :");
-                DEBUG_PRINTLN(value);
-                state_amplifier = true;
-            }
-        } else {
-            if (state_amplifier)
-            {
-                digitalWrite(33, 0); //disable amplifier
-                DEBUG_PRINTLN("RMS low, shutdown amplifier : ");
-                DEBUG_PRINTF("rms2 :");
-                DEBUG_PRINTLN(value);
-                state_amplifier = false;
-            }
-        }
-    }
+//    if (rms_out.available() && (timeout_amp > DEFAULT_TIMEOUT)) 
+//    {
+//        value = rms_out.read() * 10.0;
+//        if(value > 0.0) {
+//            timeout_amp = 0;
+//            if (!state_amplifier)
+//            {
+//                digitalWrite(33, 1); //enable amplifier
+//                DEBUG_PRINTLN("RMS >0, start amplifier : ");
+//                DEBUG_PRINTF("rms2 :");
+//                DEBUG_PRINTLN(value);
+//                state_amplifier = true;
+//            }
+//        } else {
+//            if (state_amplifier)
+//            {
+//                digitalWrite(33, 0); //disable amplifier
+//                DEBUG_PRINTLN("RMS low, shutdown amplifier : ");
+//                DEBUG_PRINTF("rms2 :");
+//                DEBUG_PRINTLN(value);
+//                state_amplifier = false;
+//            }
+//        }
+//    }
     time_start = micros();
 }

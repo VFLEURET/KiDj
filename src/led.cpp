@@ -53,9 +53,11 @@ void init_led(void)
 {
     uint8_t cmd[9];
     Wire.begin();
+    
     pinMode(LED_EN, OUTPUT);
+    digitalWrite(LED_EN, false);
+    delay(100);
     digitalWrite(LED_EN, true);
-
     delay(100);
     
     cmd[0] = 0x01;
@@ -83,8 +85,8 @@ void init_led(void)
     AN32183_write_cmd(C1_PWM,9,cmd);
     AN32183_write_cmd(D1_PWM,9,cmd);
     
-    all_led(0x50);
-    delay(2000);
+    //all_led(0x50);
+    //delay(2000);
     clear_led();
     memset(cmd,0x10,5);
     AN32183_write_cmd(DTC1, 5, cmd);

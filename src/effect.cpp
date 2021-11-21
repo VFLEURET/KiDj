@@ -9,28 +9,36 @@ elapsedMillis timeout_effect;
 
 void update_effect(void)
 {
-    static float previous_delay, previous_reverb;
+    static uint16_t previous_knob1, previous_knob2;
+    static uint16_t lpf_knob1, lpf_knob2;
+    uint16_t knob;
+    float feedback;
 
-    if(timeout_effect > 200)
+    if(timeout_effect > 100)
     {
-        int knob = analogRead(A17);
-        if (knob < 10) knob = 0;
-        float feedback = (float)knob / 1050.0;
-        feedback = 0.01;
-        if(feedback != previous_delay) {
+        knob = analogRead(A17);
+
+        lpf_knob1 = lpf_knob1 + ((knob - lpf_knob1) >> 2);
+        
+        if (lpf_knob1 < 10) lpf_knob1 = 0;
+
+        if(lpf_knob1 != previous_knob1) {
+            feedback = lpf_knob1 / 1050.0;
+            DEBUG_PRINTF("Delay %d\r\n", lpf_knob1);
             mixer9.gain(3, feedback);
-            DEBUG_PRINTF("Delay %d\r\n", feedback);
-            previous_delay = feedback;
+            previous_knob1 = lpf_knob1;
         }
 
         knob = analogRead(A16);
-        if (knob < 10) knob = 0;
-        feedback = (float)knob / 1050.0;
-        feedback = 0.01;
-        if(feedback != previous_reverb) {
+        lpf_knob2 = lpf_knob2 + ((knob - lpf_knob2) >> 2);
+        
+        if (lpf_knob2 < 10) lpf_knob2 = 0;
+
+        if(lpf_knob2 != previous_knob2) {
+            feedback = lpf_knob2 / 1050.0;
+            DEBUG_PRINTF("reverd %d\r\n", lpf_knob2);
             reverb.reverbTime(feedback);
-            DEBUG_PRINTF("reverb %d\r\n", feedback);
-            previous_reverb = feedback;
+            previous_knob2 = lpf_knob2;
         }
         timeout_effect = 0;
     }
@@ -47,7 +55,7 @@ void DRUM1_irq(void)
 void DRUM2_irq(void)
 {
     detachInterrupt(DRUM2);
-    playMemDrum2.play(AudioSampleTomtom);
+    playMemDrum2.play(AudioSampleHihat);
     attachInterrupt(DRUM2, DRUM2_irq, RISING);
     timeout_sleep = 0;
 }
@@ -55,7 +63,7 @@ void DRUM2_irq(void)
 void DRUM3_irq(void)
 {
     detachInterrupt(DRUM3);
-    playMemDrum3.play(AudioSampleHihat);   
+    playMemDrum3.play(AudioSampleTomtom);   
     attachInterrupt(DRUM3, DRUM3_irq, RISING);
     timeout_sleep = 0;
 }

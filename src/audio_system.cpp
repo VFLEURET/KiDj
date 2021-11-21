@@ -138,7 +138,7 @@ void init_mixer(void)
     mixer9.gain(3, 0);
     delay1.delay(0, 400);
 
-    biquad_out.setLowShelf(0, 300, 10, 0.5);
+    biquad_out.setLowShelf(0, 300, 2, 0.5);
 
 }
 
@@ -146,7 +146,9 @@ void init_audio(void)
 {
     AudioMemory(1000);
     pinMode(23, OUTPUT); //vumetre
+    analogWrite(23, 0);
     pinMode(33, OUTPUT); //sd ampli
+    digitalWrite(33, true);
     reverb.reverbTime(0);
 
     amp_Micro.gain(0.0);

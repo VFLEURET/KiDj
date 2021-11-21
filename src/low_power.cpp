@@ -9,7 +9,7 @@ void goto_sleep(void)
     pinMode(38, OUTPUT);
     digitalWrite(33, false); //disable amplifier
     digitalWrite(35, false);
-    //digitalWrite(38, true);
+    digitalWrite(38, true);
     delay(5000);
-    //digitalWrite(38, true);
+
 }
