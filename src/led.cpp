@@ -14,13 +14,17 @@ uint8_t AN32183_write_cmd(uint8_t reg, uint8_t length, uint8_t* data)
 {
     uint8_t i, error;
 
+    cli();
     Wire.beginTransmission(ADD_AN32183 & 0xFE);
     Wire.write(reg);
     for( i=0; i<length; i++)
         Wire.write(data[i]); 
     error = Wire.endTransmission(true);    // stop transmitting
-    if (error) 
+    if (error) {
         DEBUG_PRINTF("Error i2c led %d \r\n", error);
+        init_led();
+    }
+    sei();
     return error;
 }
 
@@ -53,12 +57,12 @@ void init_led(void)
 {
     uint8_t cmd[9];
     Wire.begin();
-    
+
     pinMode(LED_EN, OUTPUT);
     digitalWrite(LED_EN, false);
-    delay(100);
+    delay(10);
     digitalWrite(LED_EN, true);
-    delay(100);
+    delay(10);
     
     cmd[0] = 0x01;
     if(AN32183_write_cmd(POWERCNT,1,cmd))

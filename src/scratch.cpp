@@ -56,7 +56,7 @@ void init_scratch(void)
     DEBUG_PRINTF("PIX_ID 0x%02X 0x%02X \r\n ", pix_read(0x00), pix_read(0x01));
     if (pix_flag == false)
         return;
-    pix_write(RES_X, 0x09);
+    pix_write(RES_X, 0x3F);
     pix_write(RES_Y, 0x00);
     attachInterrupt(PIX_INT, encode_scratch, FALLING);
 }
@@ -68,6 +68,7 @@ void encode_scratch(void)
     int16_t rotl, roth;
     uint32_t position;
     static uint8_t direction = 0;
+    static int16_t cumul;
 
     if (pix_flag == false)
         return;
@@ -81,13 +82,15 @@ void encode_scratch(void)
             roth |= 0xf000;
         }
         rotl = rotl | roth;
-        DEBUG_PRINTF(" Rot : %i\r\n", rotl);
+        //cumul += rotl;
+        //DEBUG_PRINTLN(cumul);
+        rotl = -rotl;
+        //DEBUG_PRINTF(" Rot : %i\r\n", rotl);
         if (rotl > 5)
         {
             if ((playMem16.isPlaying() && direction == 1) ||
                (!playMem16.isPlaying()))
             {
-
                 position = playMem16.positionMillis();
                 //DEBUG_PRINTF("Play norm to %d%d \r\n", position, direction);
                 playMem16.stop();
@@ -96,8 +99,7 @@ void encode_scratch(void)
                 timeout = 3000 + millis();;
                 timeout_sleep = 0;
             }
-            if (direction)
-                timeout = 2000 + millis();;
+            timeout = 2000 + millis();;
 
         }
         else if(rotl < -5)
@@ -105,14 +107,17 @@ void encode_scratch(void)
             if ((playMem16.isPlaying() && direction == 0) ||
                (!playMem16.isPlaying()))
             {
-                position = (sizeof(AudioSampleScratch_norm) / sizeof(AudioSampleScratch_norm[0])) - playMem16.positionMillis();
-                //DEBUG_PRINTF("Play inv to %d %d\r\n", position, direction);
+                position = (sizeof(AudioSampleScratch_norm) / sizeof(AudioSampleScratch_norm[0])) - playMem16.positionMillis() - 50000;
+                //uint32_t size_scratch =  (sizeof(AudioSampleScratch_norm) / sizeof(AudioSampleScratch_norm[0]));
                 playMem16.stop();
-                playMem16.play(AudioSampleScratch_inv + position);
+                uint32_t ptr = &(AudioSampleScratch_inv[0]);// + position;
+                DEBUG_PRINTF("Play inv to %d %d %d\r\n", position, AudioSampleScratch_inv, ptr );
+                playMem16.play(ptr);
                 direction = 1;
                 timeout = 1000 + millis();
                 timeout_sleep = 0;
             }
+            timeout = 1000 + millis();
         }
     }
 

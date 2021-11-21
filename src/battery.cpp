@@ -16,7 +16,7 @@ static bool charger_flag = false;
 static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
 {
     uint8_t error;
-
+    cli();
     Wire.beginTransmission(CHARGER_ADD);
     Wire.write(reg_add);
     Wire.write((uint8_t)(data & 0xFF)); 
@@ -29,18 +29,21 @@ static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
     }
     else
         charger_flag = true;
+    sei();
 }
 
 static uint16_t charger_read(uint8_t reg_add) {
     uint8_t error;
 	uint16_t data, c1, c2;
     
+    cli();
     Wire.beginTransmission(CHARGER_ADD);
     Wire.write(reg_add);
         error = Wire.endTransmission(true);    // stop transmitting
     if (error){ 
         fuel_flag = false;
         DEBUG_PRINTF("Error charger read i2c %d \r\n", error);
+        sei();
         return 0;
     }
     Wire.requestFrom(CHARGER_ADD, 2);
@@ -48,14 +51,14 @@ static uint16_t charger_read(uint8_t reg_add) {
         c1 = Wire.read();
         c2 = Wire.read();
     Wire.endTransmission();    // stop transmitting  
-
+    sei();
 	return (((c2 & 0x00FF) << 8) + (c1 & 0x00FF));
 }
 
 static void fuel_gauge_write(uint8_t reg_add, uint16_t data, uint8_t length)
 {
     uint8_t error;
-
+    cli();
     Wire.beginTransmission(FUEL_GAUGE_ADD);
     Wire.write(reg_add);
     Wire.write((uint8_t)(data & 0xFF)); 
@@ -65,17 +68,20 @@ static void fuel_gauge_write(uint8_t reg_add, uint16_t data, uint8_t length)
     if (error){ 
         DEBUG_PRINTF("Error i2c fuel write %d %d \r\n", reg_add, error);
     }
+    sei();
 }
 
 static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length) 
 {
     uint8_t c1, c2 = 0, error;
+    cli()
     Wire.beginTransmission(FUEL_GAUGE_ADD);
     Wire.write(reg_add);
     error = Wire.endTransmission(true);    // stop transmitting
     if (error){ 
         fuel_flag = false;
         DEBUG_PRINTF("Error fuel read i2c %d \r\n", error);
+        sei();
         return 0;
     }
     Wire.requestFrom(FUEL_GAUGE_ADD, length);
@@ -85,6 +91,7 @@ static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length)
         c2 = Wire.read();
     Wire.endTransmission();    // stop transmitting  
     fuel_flag = true;
+    sei();
 	return (c1 + (c2 << 8));
 }
 
@@ -113,10 +120,10 @@ void init_fuel(void) {
 
     HibCFG = fuel_gauge_read(0xBA, 2);  //Store original HibCFG value
 
-//    if (fuel_flag == false) {
-//        DEBUG_PRINTLN("No fuel gauge");
-//        return;
-//    }
+    if (fuel_flag == false) {
+        DEBUG_PRINTLN("No fuel gauge");
+        return;
+    }
 
     fuel_gauge_write(0x60, 0x90, 1); // Exit Hibernate Mode step 1
     fuel_gauge_write(0xBA, 0x00, 1);  // Exit Hibernate Mode step 2
