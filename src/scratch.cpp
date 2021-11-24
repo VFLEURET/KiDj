@@ -61,7 +61,7 @@ void init_scratch(void)
     attachInterrupt(PIX_INT, encode_scratch, FALLING);
 }
 
-static uint32_t timeout;
+static uint32_t timeout_scratch;
 
 void encode_scratch(void)
 {
@@ -96,10 +96,10 @@ void encode_scratch(void)
                 playMem16.stop();
                 playMem16.play(AudioSampleScratch_norm + position);
                 direction = 0;
-                timeout = 3000 + millis();;
+                timeout_scratch = 3000 + millis();;
                 timeout_sleep = 0;
             }
-            timeout = 2000 + millis();;
+            timeout_scratch = 2000 + millis();;
 
         }
         else if(rotl < -5)
@@ -107,17 +107,17 @@ void encode_scratch(void)
             if ((playMem16.isPlaying() && direction == 0) ||
                (!playMem16.isPlaying()))
             {
-                position = (sizeof(AudioSampleScratch_norm) / sizeof(AudioSampleScratch_norm[0])) - playMem16.positionMillis() - 50000;
+                //position = (sizeof(AudioSampleScratch_norm) / sizeof(AudioSampleScratch_norm[0])) - playMem16.positionMillis() - 50000;
                 //uint32_t size_scratch =  (sizeof(AudioSampleScratch_norm) / sizeof(AudioSampleScratch_norm[0]));
                 playMem16.stop();
-                uint32_t ptr = &(AudioSampleScratch_inv[0]);// + position;
-                DEBUG_PRINTF("Play inv to %d %d %d\r\n", position, AudioSampleScratch_inv, ptr );
-                playMem16.play(ptr);
+                //uint32_t ptr = &(AudioSampleScratch_inv[0]);// + position;
+                //DEBUG_PRINTF("Play inv to %d %d %d\r\n", position, AudioSampleScratch_inv, ptr );
+                playMem16.play(AudioSampleDj);
                 direction = 1;
-                timeout = 1000 + millis();
+                timeout_scratch = 2000 + millis();
                 timeout_sleep = 0;
             }
-            timeout = 1000 + millis();
+            timeout_scratch = 1000 + millis();
         }
     }
 
@@ -126,6 +126,6 @@ void encode_scratch(void)
 
 void update_scratch(void)
 {
-    if ((millis() > timeout) && playMem16.isPlaying())
+    if ((millis() > timeout_scratch) && playMem16.isPlaying())
         playMem16.stop();
 }

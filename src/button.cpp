@@ -53,6 +53,8 @@ void init_button(void)
 
 void update_button(void)
 {
+    static bool record_flag, play_flag;
+
     button1.update(); 
     button2.update(); 
     button3.update(); 
@@ -213,5 +215,41 @@ void update_button(void)
     {
         playMem15.stop();
         led_button(4, 2, 0x10, 1000);
+    }
+
+    if(bt_Rec.fallingEdge())
+    {
+        if (record_flag)
+        {
+            stop_recorder();
+            record_flag = 0;
+        } else {
+            if (play_flag)
+            {
+                stop_buffer();  
+                play_flag = 0;
+            }
+            start_recorder();
+            record_flag = 1;
+        }
+        timeout_sleep = 0;
+    }
+
+    if(bt_Play.fallingEdge())
+    {
+        if (play_flag)
+        {
+            stop_buffer();             
+            play_flag = 0;
+        } else {
+            if(record_flag)
+            {
+                stop_recorder();            
+                record_flag = 0;
+            }
+            play_buffer();
+            play_flag = 1;
+        }
+        timeout_sleep = 0;
     }
 }

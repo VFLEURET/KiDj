@@ -6,6 +6,8 @@
 // #include <SPI.h>
 // #include <SD.h>
 // #include <SerialFlash.h>
+#include "recorder.h"
+#include "debug.h"
 
 #include "audio/AudioSampleSnare.h"        // http://www.freesound.org/people/KEVOY/sounds/82583/
 #include "audio/AudioSampleTomtom.h"       // http://www.freesound.org/people/zgump/sounds/86334/
@@ -28,13 +30,14 @@
 #include "audio/AudioSampleScratch_norm.h"
 #include "audio/AudioSampleMixedbrasshitwa.h"
 #include "audio/AudioSampleNoelie.h"
+#include "audio/AudioSampleDj.h"
 
 void init_mixer(void);
 void init_audio(void);
 void update_vumetre(void);
 void update_effect(void);
 void init_drum(void);
-
+void update_micro(void);
 void init_volume(float Vol_ext);
 
 void init_scratch(void);
@@ -61,6 +64,8 @@ extern AudioPlayMemory          playMem15; //xy=174,542
 extern AudioPlayMemory          playMem11; //xy=177,395
 extern AudioPlayMemory          playMem13; //xy=178,469
 extern AudioPlayMemory          playMem16; 
+extern AudioRecordQueue         record;
+extern AudioPlayQueue           Play_record;
 extern AudioMixer4              mixer6; //xy=432,686
 extern AudioMixer4              mixer5; //xy=437,504
 extern AudioMixer4              mixer4; //xy=438,376
@@ -72,7 +77,7 @@ extern AudioMixer4              mixer7; //xy=653,284
 extern AudioFilterBiquad        biquad_Micro;        //xy=784,1023
 extern AudioMixer4              mixer8; //xy=861,416
 extern AudioMixer4              mixer1;         //xy=1116.333251953125,687.3333435058594
-extern AudioEffectReverb        reverb;        //xy=1277.36669921875,606.3667297363281
+//extern AudioEffectReverb        reverb;        //xy=1277.36669921875,606.3667297363281
 extern AudioAnalyzeRMS          rms1;           //xy=1277.333251953125,941.3333740234375
 extern AudioEffectDelay         delay1;         //xy=1490.36669921875,779.36669921875
 extern AudioMixer4              mixer9; //xy=1491.36669921875,614.36669921875
@@ -80,5 +85,5 @@ extern AudioAmplifier           Volume;           //xy=1660.36669921875,815.3666
 extern AudioOutputI2S           i2s_out;           //xy=1826.333251953125,790.3333740234375
 extern AudioAnalyzeRMS          rms_out; //xy=1827.36669921875,857.36669921875
 extern AudioFilterBiquad        biquad_out;        //xy=1640.0999755859375,766.0999450683594
-
+extern AudioEffectBitcrusher    bitcrusher1;
 #endif

@@ -9,10 +9,13 @@ elapsedMillis timeout_effect;
 
 void update_effect(void)
 {
-    static uint16_t previous_knob1, previous_knob2;
-    static uint16_t lpf_knob1, lpf_knob2;
+    static uint16_t previous_knob1 = 0xFFFF, previous_knob2 = 0xFFFF;
+    static uint16_t lpf_knob1 = 0, lpf_knob2 = 0;
     uint16_t knob;
     float feedback;
+    //BitCrusher
+    int current_CrushBits = 16; //this defaults to passthrough.
+    int current_SampleRate = 44100; // this defaults to passthrough.
 
     if(timeout_effect > 100)
     {
@@ -31,13 +34,17 @@ void update_effect(void)
 
         knob = analogRead(A16);
         lpf_knob2 = lpf_knob2 + ((knob - lpf_knob2) >> 2);
-        
-        if (lpf_knob2 < 10) lpf_knob2 = 0;
-
+           
         if(lpf_knob2 != previous_knob2) {
-            feedback = lpf_knob2 / 1050.0;
-            DEBUG_PRINTF("reverd %d\r\n", lpf_knob2);
-            reverb.reverbTime(feedback);
+            if (lpf_knob2 < 10)
+                current_SampleRate = 44100;
+            else {
+                current_SampleRate = (uint16_t)(-1.65 * lpf_knob2 + 3600);
+            }
+            
+            DEBUG_PRINTF("reverd %d %d\r\n", lpf_knob2, current_SampleRate);
+            bitcrusher1.sampleRate(current_SampleRate);
+            //reverb.reverbTime(feedback);
             previous_knob2 = lpf_knob2;
         }
         timeout_effect = 0;
@@ -47,24 +54,30 @@ void update_effect(void)
 void DRUM1_irq(void)
 {
     detachInterrupt(DRUM1);
+    digitalWrite(39, 1);
     playMemDrum1.play(AudioSampleSnare);
     attachInterrupt(DRUM1, DRUM1_irq, RISING);
+    digitalWrite(39, 0);
     timeout_sleep = 0;
 }
 
 void DRUM2_irq(void)
 {
     detachInterrupt(DRUM2);
+    digitalWrite(39, 1);
     playMemDrum2.play(AudioSampleHihat);
     attachInterrupt(DRUM2, DRUM2_irq, RISING);
+    digitalWrite(39, 0);
     timeout_sleep = 0;
 }
 
 void DRUM3_irq(void)
 {
     detachInterrupt(DRUM3);
+    digitalWrite(39, 1);
     playMemDrum3.play(AudioSampleTomtom);   
     attachInterrupt(DRUM3, DRUM3_irq, RISING);
+    digitalWrite(39, 0);
     timeout_sleep = 0;
 }
 

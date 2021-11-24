@@ -157,8 +157,8 @@ void update_animation(void)
         //case 2 :
             AN32183_write_cmd(DTA1, 5, sweep[inc]);
             AN32183_write_cmd(DTB1, 5, sweep[inc+1]);
-            led_button(0, 3, 0xFF, 0);
-            led_button(1, 3, 0xFF, 0);
+           // led_button(0, 3, 0xFF, 0);
+            //led_button(1, 3, 0xFF, 0);
             //AN32183_write_cmd(DTC1, 5, sweep[inc+2]);
             inc ++;
         break;
@@ -166,8 +166,8 @@ void update_animation(void)
             AN32183_write_cmd(DTA1, 5, sweep[inc]);
             AN32183_write_cmd(DTB1, 5, sweep[inc+1]);
             //AN32183_write_cmd(DTC1, 5, sweep[0]);
-            led_button(0, 3, 0x0, 0);
-            led_button(1, 3, 0x0, 0);
+            //led_button(0, 3, 0x0, 0);
+            //led_button(1, 3, 0x0, 0);
             inc ++;
         break;
         case 5 :

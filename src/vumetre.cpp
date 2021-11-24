@@ -13,7 +13,7 @@ void update_vumetre(void)
             value = rms1.read() * 250;
             if (value > 0xFF)
                 value = 0xFF;
-            if (value < 10)
+            if (value < 1)
                 value = 0;
             //DEBUG_PRINT("RMS1 : ");
             //DEBUG_PRINTLN(value);

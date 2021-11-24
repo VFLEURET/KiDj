@@ -47,13 +47,14 @@ void loop()
     //teensy + ampli 90mA
     //test low power
 
-    digitalToggle(DEBUG_PIN);
-    
+       
     update_button();
     update_vumetre(); 
     update_effect();
     update_animation();
     update_scratch();
+    update_recorder();
+    update_micro();
     
     if (timeout_sleep > TIMEOUT_SLEEP_TIME)
     {
@@ -69,11 +70,17 @@ void loop()
         timeout_printf = 0;
         DEBUG_PRINT("timeout to sleep :");
         DEBUG_PRINT(timeout_sleep);
+        if (rms_out.available())
+        {
+            DEBUG_PRINT(" RMS_OUT : ");
+            DEBUG_PRINT(rms_out.read());
+        }
         DEBUG_PRINT(" Memory usage :");
         DEBUG_PRINT(AudioMemoryUsageMax());
         DEBUG_PRINT(" Time function :");
         DEBUG_PRINT(time_function);
         DEBUG_PRINTLN("us");
+
         update_fuel(1);
     } 
 
