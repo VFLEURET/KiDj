@@ -112,7 +112,7 @@ void update_button(void)
     }
     if(button7.fallingEdge())
     {
-        playMem7.play(AudioSampleNoelie);
+        playMem7.play(AudioSamplePiano);
         led_button(1, 1, 0xFF, 1000);
         timeout_sleep = 0;
     }
@@ -124,13 +124,13 @@ void update_button(void)
     }
     if(button9.fallingEdge())
     {
-        playMem9.play(AudioSampleGong);
+        playMem9.play(AudioSampleNoelie);
         led_button(3, 1, 0xFF, 2000);
         timeout_sleep = 0;
     }
     if(button10.fallingEdge())
     {
-        playMem10.play(AudioSampleGong);
+        playMem10.play(AudioSampleAnna);
         led_button(4, 1, 0xFF, 2000);
         timeout_sleep = 0;
     }

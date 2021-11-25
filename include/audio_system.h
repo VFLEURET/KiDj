@@ -31,6 +31,8 @@
 #include "audio/AudioSampleMixedbrasshitwa.h"
 #include "audio/AudioSampleNoelie.h"
 #include "audio/AudioSampleDj.h"
+#include "audio/AudioSampleAnna.h"
+#include "audio/AudioSamplePiano.h"
 
 void init_mixer(void);
 void init_audio(void);

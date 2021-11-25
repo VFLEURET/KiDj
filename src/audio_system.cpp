@@ -40,6 +40,7 @@ AudioMixer4              mixer2;         //xy=443,56
 AudioFilterBiquad        biquad_Micro;        //xy=453,794
 AudioMixer4              mixer7; //xy=653,284
 AudioAnalyzeRMS          rms_micro; //xy=706.5999755859375,863.0999755859375
+AudioAnalyzePeak         peak_micro;          //xy=721,816
 AudioMixer4              mixer1;         //xy=779.333251953125,564.3333740234375
 AudioRecordQueue         record;         //xy=927,433
 AudioAnalyzeRMS          rms1;           //xy=938.333251953125,628.3333740234375
@@ -79,20 +80,22 @@ AudioConnection          patchCord26(mixer3, 0, mixer7, 1);
 AudioConnection          patchCord27(mixer2, 0, mixer7, 0);
 AudioConnection          patchCord28(biquad_Micro, 0, mixer1, 3);
 AudioConnection          patchCord29(biquad_Micro, rms_micro);
-AudioConnection          patchCord30(mixer7, 0, mixer1, 0);
-AudioConnection          patchCord31(mixer1, rms1);
-AudioConnection          patchCord32(mixer1, 0, mixer9, 1);
-AudioConnection          patchCord33(mixer1, record);
-AudioConnection          patchCord34(mixer1, bitcrusher1);
-AudioConnection          patchCord35(bitcrusher1, 0, mixer9, 0);
-AudioConnection          patchCord36(delay1, 0, mixer9, 3);
-AudioConnection          patchCord37(mixer9, delay1);
-AudioConnection          patchCord38(mixer9, biquad_out);
-AudioConnection          patchCord39(biquad_out, Volume);
-AudioConnection          patchCord40(Volume, 0, i2s_out, 0);
-AudioConnection          patchCord41(Volume, 0, i2s_out, 1);
-AudioConnection          patchCord42(Volume, rms_out);
+AudioConnection          patchCord30(biquad_Micro, peak_micro);
+AudioConnection          patchCord31(mixer7, 0, mixer1, 0);
+AudioConnection          patchCord32(mixer1, rms1);
+AudioConnection          patchCord33(mixer1, 0, mixer9, 1);
+AudioConnection          patchCord34(mixer1, record);
+AudioConnection          patchCord35(mixer1, bitcrusher1);
+AudioConnection          patchCord36(bitcrusher1, 0, mixer9, 0);
+AudioConnection          patchCord37(delay1, 0, mixer9, 3);
+AudioConnection          patchCord38(mixer9, delay1);
+AudioConnection          patchCord39(mixer9, biquad_out);
+AudioConnection          patchCord40(biquad_out, Volume);
+AudioConnection          patchCord41(Volume, 0, i2s_out, 0);
+AudioConnection          patchCord42(Volume, 0, i2s_out, 1);
+AudioConnection          patchCord43(Volume, rms_out);
 // GUItool: end automatically generated code
+
 
 
 
@@ -104,7 +107,7 @@ void init_mixer(void)
     mixer1.gain(2, 0.8);
 
     mixer2.gain(0, 0.8);
-    mixer2.gain(1, 0.8);
+    mixer2.gain(1, 2);
     mixer2.gain(2, 0.8);
     mixer2.gain(3, 0.8);
 
@@ -155,12 +158,12 @@ void init_audio(void)
     bitcrusher1.bits(16);
     pinMode(37, INPUT_PULLUP);
     amp_Micro.gain(0.0);
-    mixer1.gain(3, 10);
+    mixer1.gain(3, 2);
     biquad_Micro.setHighpass(0, 200, 0.7);
     biquad_Micro.setHighpass(1, 200, 0.7);
-    //biquad_Micro.setHighpass(2, 500, 0.7);
-   // biquad_Micro.setLowpass(2, 8000, 0.7);
-  //  biquad_Micro.setLowpass(3, 8000, 0.7);
+    biquad_Micro.setHighpass(2, 200, 0.7);
+    biquad_Micro.setLowpass(2, 8000, 0.7);
+    biquad_Micro.setLowpass(3, 8000, 0.7);
 }
 
 elapsedMillis timeout_Micro;
@@ -181,10 +184,12 @@ void update_micro(void)
         if (new_state)
             amp_Micro.gain(0.0);
          else
-            amp_Micro.gain(40.0);
+            amp_Micro.gain(10.0);
         DEBUG_PRINTF("Micro : %d\r\n", new_state);
         previous_state = new_state;
     }
+    if(!new_state && peak_micro.available())
+        DEBUG_PRINTLN(peak_micro.read());
     //if (rms_micro.available())
     //    DEBUG_PRINTLN(rms_micro.read());
     timeout_Micro = 0;
