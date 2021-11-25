@@ -149,21 +149,21 @@ void init_mixer(void)
 void init_audio(void) 
 {
     AudioMemory(1000);
-    pinMode(23, OUTPUT); //vumetre
-    analogWrite(23, 0);
+    //pinMode(23, OUTPUT); //vumetre
+    //analogWrite(23, 0);
     pinMode(33, OUTPUT); //sd ampli
     digitalWrite(33, true);
     //reverb.reverbTime(0);
     bitcrusher1.sampleRate(44100);
     bitcrusher1.bits(16);
-    pinMode(37, INPUT_PULLUP);
-    amp_Micro.gain(0.0);
-    mixer1.gain(3, 2);
-    biquad_Micro.setHighpass(0, 200, 0.7);
-    biquad_Micro.setHighpass(1, 200, 0.7);
-    biquad_Micro.setHighpass(2, 200, 0.7);
-    biquad_Micro.setLowpass(2, 8000, 0.7);
-    biquad_Micro.setLowpass(3, 8000, 0.7);
+    //pinMode(37, INPUT_PULLUP);
+    //amp_Micro.gain(0.0);
+    //mixer1.gain(3, 2);
+    //biquad_Micro.setHighpass(0, 200, 0.7);
+    //biquad_Micro.setHighpass(1, 200, 0.7);
+    //biquad_Micro.setHighpass(2, 200, 0.7);
+    //biquad_Micro.setLowpass(2, 8000, 0.7);
+    //biquad_Micro.setLowpass(3, 8000, 0.7);
 }
 
 elapsedMillis timeout_Micro;

@@ -89,11 +89,11 @@ void init_led(void)
     AN32183_write_cmd(C1_PWM,9,cmd);
     AN32183_write_cmd(D1_PWM,9,cmd);
     
-    //all_led(0x50);
-    //delay(2000);
+    all_led(0x50);
+    delay(2000);
     clear_led();
-    memset(cmd,0x10,5);
-    AN32183_write_cmd(DTC1, 5, cmd);
+    //memset(cmd,0x10,5);
+    //AN32183_write_cmd(DTC1, 5, cmd);
     led_enable_flag = true;
 }
 
@@ -156,23 +156,29 @@ void update_animation(void)
         //case 1 :
         //case 2 :
             AN32183_write_cmd(DTA1, 5, sweep[inc]);
-            AN32183_write_cmd(DTB1, 5, sweep[inc+1]);
+            AN32183_write_cmd(DTB1, 5, sweep[inc]);
+            AN32183_write_cmd(DTC1, 5, sweep[inc]);
+            AN32183_write_cmd(DTD1, 5, sweep[inc]);
            // led_button(0, 3, 0xFF, 0);
             //led_button(1, 3, 0xFF, 0);
             //AN32183_write_cmd(DTC1, 5, sweep[inc+2]);
             inc ++;
         break;
         case 4 :
-            AN32183_write_cmd(DTA1, 5, sweep[inc]);
+            AN32183_write_cmd(DTA1, 5, sweep[inc+1]);
             AN32183_write_cmd(DTB1, 5, sweep[inc+1]);
+            AN32183_write_cmd(DTC1, 5, sweep[inc+1]);
+            AN32183_write_cmd(DTD1, 5, sweep[inc+1]);
             //AN32183_write_cmd(DTC1, 5, sweep[0]);
             //led_button(0, 3, 0x0, 0);
             //led_button(1, 3, 0x0, 0);
             inc ++;
         break;
         case 5 :
-            AN32183_write_cmd(DTA1, 5, sweep[inc]);
-            AN32183_write_cmd(DTB1, 5, sweep[0]);
+            AN32183_write_cmd(DTA1, 5, sweep[inc+2]);
+            AN32183_write_cmd(DTB1, 5, sweep[inc+2]);
+            AN32183_write_cmd(DTC1, 5, sweep[inc+2]);
+            AN32183_write_cmd(DTD1, 5, sweep[inc+2]);
             //AN32183_write_cmd(DTC1, 5, sweep[1]);
             inc = 0;
         break;         

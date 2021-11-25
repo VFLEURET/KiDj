@@ -22,12 +22,12 @@ void setup() {
     pinMode(DEBUG_PIN, OUTPUT);
     init_audio();
     init_led();
-    init_charger();
-    init_fuel();
+    //init_charger();
+    //init_fuel();
     init_volume(0.8);
     init_button();
     init_mixer();
-    init_scratch();
+    //init_scratch();
     init_drum();
     DEBUG_PRINTLN("go to loop");
 }
@@ -49,16 +49,16 @@ void loop()
 
        
     update_button();
-    update_vumetre(); 
+    //update_vumetre(); 
     update_effect();
     update_animation();
-    update_scratch();
-    update_recorder();
-    update_micro();
+    //update_scratch();
+    //update_recorder();
+    //update_micro();
     
     if (timeout_sleep > TIMEOUT_SLEEP_TIME)
     {
-        goto_sleep();
+        //goto_sleep();
         timeout_sleep = 0;
     }
 
