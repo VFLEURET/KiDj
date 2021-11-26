@@ -4,7 +4,7 @@
 #include "led.h"
 #include "debug.h"
 
-#define ADD_AN32183 0x5C
+#define ADD_AN32183 0x5D
 #define LED_EN 35
 
 static uint32_t next_timeout;
@@ -56,14 +56,14 @@ void all_led(uint8_t bright){
 void init_led(void)
 {
     uint8_t cmd[9];
-    Wire.begin();
 
+    Wire.begin();
     pinMode(LED_EN, OUTPUT);
     digitalWrite(LED_EN, false);
     delay(10);
     digitalWrite(LED_EN, true);
     delay(10);
-    
+
     cmd[0] = 0x01;
     if(AN32183_write_cmd(POWERCNT,1,cmd))
     {
@@ -132,12 +132,12 @@ void led_rgb(rgb_t color, uint8_t bright)
 }
 
 //uint8_t sweep[] = {1, 2, 3, 4, 6, 8, 10, 15, 20, 30, 40, 60, 60, 40, 30, 20, 15, 10, 8, 6, 4, 3, 2, 1};
-uint8_t sweep[6][5] = {{255,100,50,20,10},
-                        {100,255,100,50,20},
-                        {50,100,255,100,50},
-                        {20,50,100,255,100},
-                        {10,20,50,100,255},
-                        {10,10,20,50,100},
+uint8_t sweep[6][4] = {{255,100,50,20},
+                        {100,255,100,50},
+                        {50,100,255,100},
+                        {50,100,255,100},
+                        {20,50,100,255},
+                        {10,20,50,100},
                         };
 
 void update_animation(void)
@@ -152,33 +152,23 @@ void update_animation(void)
 
     switch(inc)
     {
-        case 0 ... 3 :
+        case 0 ... 4 :
         //case 1 :
         //case 2 :
-            AN32183_write_cmd(DTA1, 5, sweep[inc]);
-            AN32183_write_cmd(DTB1, 5, sweep[inc]);
-            AN32183_write_cmd(DTC1, 5, sweep[inc]);
-            AN32183_write_cmd(DTD1, 5, sweep[inc]);
+            AN32183_write_cmd(DTA1, 4, sweep[inc]);
+            AN32183_write_cmd(DTB1, 4, sweep[inc]);
+            AN32183_write_cmd(DTC1, 4, sweep[inc]);
+            AN32183_write_cmd(DTD1, 4, sweep[inc]);
            // led_button(0, 3, 0xFF, 0);
             //led_button(1, 3, 0xFF, 0);
             //AN32183_write_cmd(DTC1, 5, sweep[inc+2]);
             inc ++;
         break;
-        case 4 :
-            AN32183_write_cmd(DTA1, 5, sweep[inc+1]);
-            AN32183_write_cmd(DTB1, 5, sweep[inc+1]);
-            AN32183_write_cmd(DTC1, 5, sweep[inc+1]);
-            AN32183_write_cmd(DTD1, 5, sweep[inc+1]);
-            //AN32183_write_cmd(DTC1, 5, sweep[0]);
-            //led_button(0, 3, 0x0, 0);
-            //led_button(1, 3, 0x0, 0);
-            inc ++;
-        break;
         case 5 :
-            AN32183_write_cmd(DTA1, 5, sweep[inc+2]);
-            AN32183_write_cmd(DTB1, 5, sweep[inc+2]);
-            AN32183_write_cmd(DTC1, 5, sweep[inc+2]);
-            AN32183_write_cmd(DTD1, 5, sweep[inc+2]);
+            AN32183_write_cmd(DTA1, 4, sweep[inc]);
+            AN32183_write_cmd(DTB1, 4, sweep[inc]);
+            AN32183_write_cmd(DTC1, 4, sweep[inc]);
+            AN32183_write_cmd(DTD1, 4, sweep[inc]);
             //AN32183_write_cmd(DTC1, 5, sweep[1]);
             inc = 0;
         break;         
