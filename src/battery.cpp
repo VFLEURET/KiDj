@@ -107,10 +107,10 @@ void init_charger(void) {
         return;
     }
     charger_write(CHARGE_OPTION1_ADRR, 0x0211, 2);
-    charger_write(CHARGE_OPTION2_ADRR, 0x0000, 2);
+    //charger_write(CHARGE_OPTION2_ADRR, 0x0000, 2);
     charger_write(MAX_CHARGE_VOLT_ADRR, 4400, 2);
     charger_write(MIN_SYSTEM_VOLT_ADRR, (3100 >> 8) & 0xFF, 1);
-    charger_write(CHARGE_CURRENT_ADRR, 1000 * 1.2, 2);
+    charger_write(CHARGE_CURRENT_ADRR, 800 * 1.2, 2);
     charger_write(INPUT_CURRENT_ADRR, ((int)(1000 * 1.2) >>6), 1);
     //info();
 }
