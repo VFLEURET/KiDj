@@ -81,19 +81,27 @@ void init_led(void)
 //    cmd[0] = 0x00;
 //    AN32183_write_cmd(SCANSET,1,cmd);
     
-    //memset(cmd,0xA7,9); //10mA ans 0.888 x T
-    memset(cmd,0xA1,9); //20mA ans 0.333 x T
-    //memset(cmd,0x10,9); //4mA ans 0.333 x T
+    //memset(cmd,0xA7,9); //20mA ansd 0.888 x T
+    memset(cmd,0xA1,9); //20mA and 0.333 x T
+    //memset(cmd,0x10,9); //4mA and 0.333 x T
     AN32183_write_cmd(A1_PWM,9,cmd);
     AN32183_write_cmd(B1_PWM,9,cmd);
     AN32183_write_cmd(C1_PWM,9,cmd);
     AN32183_write_cmd(D1_PWM,9,cmd);
-    
+    AN32183_write_cmd(E1_PWM,9,cmd);
+
     //all_led(0x50);
     //delay(2000);
     clear_led();
-    memset(cmd,0x10,5);
+    memset(cmd, 0x20,5);
     AN32183_write_cmd(DTC1, 5, cmd);
+    //retrocelairage vumetre
+    memset(cmd,0xF0,5);
+    AN32183_write_cmd(D1_PWM + 3, 2, cmd);
+    AN32183_write_cmd(E1_PWM + 3, 3, cmd);
+    memset(cmd,0xFF,5);
+    AN32183_write_cmd(DTD1 + 3, 2, cmd);
+    AN32183_write_cmd(DTE1 + 3, 3, cmd);
     led_enable_flag = true;
 }
 

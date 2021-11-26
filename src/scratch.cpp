@@ -10,6 +10,7 @@
 
 #define MOTION  0x02
 #define D_X_Lo  0x03
+#define OP_MODE 0x05
 #define RES_X   0x0D
 #define RES_Y   0x0E
 #define D_X_Hi  0x12
@@ -58,7 +59,13 @@ void init_scratch(void)
         return;
     pix_write(RES_X, 0x3F);
     pix_write(RES_Y, 0x00);
+    pix_write(OP_MODE, 0x01);
     attachInterrupt(PIX_INT, encode_scratch, FALLING);
+}
+
+void off_scratch(void)
+{
+    pix_write(OP_MODE, 0x01);
 }
 
 static uint32_t timeout_scratch;
