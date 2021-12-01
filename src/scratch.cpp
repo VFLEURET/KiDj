@@ -104,7 +104,7 @@ void encode_scratch(void)
                 playMem16.play(AudioSampleScratch_norm + position);
                 direction = 0;
                 timeout_scratch = rotl * 100 + millis();;
-                timeout_sleep = 0;
+                wakeup();
             }
             timeout_scratch = rotl * 100 + millis();;
 
@@ -118,7 +118,7 @@ void encode_scratch(void)
                 playMem16.play(AudioSampleDj);
                 direction = 1;
                 timeout_scratch = -rotl * 100 + millis();
-                timeout_sleep = 0;
+                wakeup();
             }
             timeout_scratch = -rotl * 100 + millis();
         }

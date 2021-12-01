@@ -24,7 +24,8 @@ void update_animation(void);
 void led_rgb(rgb_t color, uint8_t bright);
 void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout);
 void led_state(led_state_t new_state);
-
+void stop_animation(void);
+void start_animation(void);
 
 #define RED				((rgb_t){255,0,0})
 #define GREEN			((rgb_t){0,255,0})

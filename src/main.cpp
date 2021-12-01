@@ -41,7 +41,7 @@ float rms_out_f;
 
 void loop() 
 {
-
+    uint8_t status_charger;
     //teensy seul : 80mA a 600MHz
     //teensy seul : 47mA a 60MHz
     //teensy + ampli 90mA
@@ -58,10 +58,16 @@ void loop()
     
     if (timeout_sleep > TIMEOUT_SLEEP_TIME)
     {
-        goto_sleep();
+        status_charger = digitalRead(ACOK);
+        DEBUG_PRINTF("Charger status %d\r\n", status_charger);
+        if (digitalRead(ACOK))
+            stop_animation();
+        else
+        {
+            goto_sleep();
+        }
         timeout_sleep = 0;
     }
-
     
     time_function = micros() - time_start;
 

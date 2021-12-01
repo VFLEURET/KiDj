@@ -196,8 +196,8 @@ void update_fuel(bool print_flag) {
     //     console_printf("Fuel gauge status 0x%04X\r\n", buffer >> 1);
     // }
     state_charger = digitalRead(ACOK);
-    if (state_charger)
-        timeout_sleep = 0;
+    //if (state_charger)
+    //    timeout_sleep = 0;
     if (state_charger != previous_state_charger) {
         DEBUG_PRINTF("state change %d\r\n", state_charger);
         previous_state_charger = state_charger;
@@ -220,7 +220,7 @@ void update_fuel(bool print_flag) {
         previous_Temp = Temp;
         previous_cap = capa;
         previous_SOC = soc;
-        if (current > 200)
+        if (current > 20)
           led_state(CHARGE_LED);
         else if (soc < 10)
           led_state(EMPTY_BATT_LED);

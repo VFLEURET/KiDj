@@ -8,6 +8,7 @@
 // #include <SerialFlash.h>
 #include "recorder.h"
 #include "debug.h"
+#include "low_power.h"
 
 #include "audio/AudioSampleSnare.h"        // http://www.freesound.org/people/KEVOY/sounds/82583/
 #include "audio/AudioSampleTomtom.h"       // http://www.freesound.org/people/zgump/sounds/86334/
@@ -67,7 +68,6 @@ extern AudioPlayMemory          playMem11; //xy=177,395
 extern AudioPlayMemory          playMem13; //xy=178,469
 extern AudioPlayMemory          playMem16; 
 extern AudioRecordQueue         record;
-extern AudioPlayQueue           Play_record;
 extern AudioMixer4              mixer6; //xy=432,686
 extern AudioMixer4              mixer5; //xy=437,504
 extern AudioMixer4              mixer4; //xy=438,376
@@ -88,4 +88,5 @@ extern AudioOutputI2S           i2s_out;           //xy=1826.333251953125,790.33
 extern AudioAnalyzeRMS          rms_out; //xy=1827.36669921875,857.36669921875
 extern AudioFilterBiquad        biquad_out;        //xy=1640.0999755859375,766.0999450683594
 extern AudioEffectBitcrusher    bitcrusher1;
+extern AudioPlaySdRaw           playSdRawRecord;     //xy=434,744
 #endif

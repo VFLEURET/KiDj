@@ -31,8 +31,8 @@ AudioPlayMemory          playMem16; //xy=174.10000610351562,577.0999755859375
 AudioPlayMemory          playMem11; //xy=177,395
 AudioPlayMemory          playMem13; //xy=178,469
 AudioAmplifier           amp_Micro;           //xy=299,794
-AudioPlayQueue           Play_record;         //xy=423.3333435058594,746.666736125946
 AudioMixer4              mixer6; //xy=432,686
+AudioPlaySdRaw           playSdRawRecord;     //xy=434,744
 AudioMixer4              mixer5; //xy=437,504
 AudioMixer4              mixer4; //xy=438,376
 AudioMixer4              mixer3; //xy=441,217
@@ -72,8 +72,8 @@ AudioConnection          patchCord18(playMem16, 0, mixer5, 3);
 AudioConnection          patchCord19(playMem11, 0, mixer4, 2);
 AudioConnection          patchCord20(playMem13, 0, mixer5, 0);
 AudioConnection          patchCord21(amp_Micro, biquad_Micro);
-AudioConnection          patchCord22(Play_record, 0, mixer1, 2);
-AudioConnection          patchCord23(mixer6, 0, mixer1, 1);
+AudioConnection          patchCord22(mixer6, 0, mixer1, 1);
+AudioConnection          patchCord23(playSdRawRecord, 0, mixer1, 2);
 AudioConnection          patchCord24(mixer5, 0, mixer7, 3);
 AudioConnection          patchCord25(mixer4, 0, mixer7, 2);
 AudioConnection          patchCord26(mixer3, 0, mixer7, 1);
@@ -95,7 +95,6 @@ AudioConnection          patchCord41(Volume, 0, i2s_out, 0);
 AudioConnection          patchCord42(Volume, 0, i2s_out, 1);
 AudioConnection          patchCord43(Volume, rms_out);
 // GUItool: end automatically generated code
-
 
 
 
@@ -240,7 +239,7 @@ static void encoderA(void) {
         Volume.gain(Vol_f);
         DEBUG_PRINT("New vol : ");
         DEBUG_PRINTLN(Vol_f);
-        timeout_sleep = 0;
+        wakeup();
     }
 
 }

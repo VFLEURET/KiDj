@@ -1,5 +1,8 @@
 #include <Audio.h>
+#include "audio_system.h"
+#include "led.h"
 #include "debug.h"
+#include "low_power.h"
 
 void goto_sleep(void)
 {
@@ -12,4 +15,10 @@ void goto_sleep(void)
     digitalWrite(38, true);
     delay(5000);
 
+}
+
+void wakeup(void)
+{
+    timeout_sleep = 0;
+    start_animation();
 }
