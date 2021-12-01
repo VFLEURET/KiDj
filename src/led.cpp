@@ -1,6 +1,7 @@
 #include <Audio.h>
 #include <Wire.h>
 
+#include "audio_system.h"
 #include "led.h"
 #include "debug.h"
 
@@ -118,7 +119,7 @@ void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout)
         return;
     if(y > 3)
         return;
-    DEBUG_PRINTF("led x %d y %d PWM %d \r\n",x, y, bright);
+    //DEBUG_PRINTF("led x %d y %d PWM %d \r\n",x, y, bright);
     reg = DTA1 + x + (y*9);
     AN32183_write_cmd(reg, 1, &bright);
     next_timeout = millis() + timeout;    
@@ -142,13 +143,24 @@ void led_rgb(rgb_t color, uint8_t bright)
     AN32183_write_cmd(DTD1 + 5, 1, &b);
 }
 
-uint8_t sweep[6][5] =  {{255,100,50,20,10},
-                        {100,255,100,50,20},
-                        {50,100,255,100,50},
-                        {20,50,100,255,100},
-                        {10,20,50,100,255},
-                        {10,10,20,50,100},
+//uint8_t sweep[6][5] =  {{255,100,50,20,10},
+//                        {100,255,100,50,20},
+//                        {50,100,255,100,50},
+//                        {20,50,100,255,100},
+//                        {10,20,50,100,255},
+//                        {10,10,20,50,100},
+//                        };
+
+uint8_t sweep[7][5] =  {{255,20,20,20,20},
+                        {100,255,20,20,20},
+                        {50,100,255,20,20},
+                        {30,50,100,255,20},
+                        {20,30,50,100,255},
+                        {20,20,30,50,100},
+                        {20,20,20,30,50},
                         };
+
+
 
 void update_animation(void)
 {
@@ -167,9 +179,44 @@ void update_animation(void)
     AN32183_write_cmd(DTB1, 5, sweep[inc]);
     inc ++;
 
-    if (inc > 5)
+    if (inc > 6)
         inc = 0;
 
+    if (!playMem11.isPlaying())
+    {
+        if (inc%2)
+            led_button(0, 2, 0x20, 0);
+        else
+            led_button(0, 2, 0x30, 0);
+    }
+    if (!playMem12.isPlaying())
+    {
+        if (inc%2)
+            led_button(1, 2, 0x20, 0);
+        else
+            led_button(1, 2, 0x30, 0);
+    }
+    if (!playMem13.isPlaying())
+    {
+        if (inc%2)
+            led_button(2, 2, 0x20, 0);
+        else
+            led_button(2, 2, 0x30, 0);
+    }
+    if (!playMem14.isPlaying())
+    {
+        if (inc%2)
+            led_button(3, 2, 0x20, 0);
+        else
+            led_button(3, 2, 0x30, 0);
+    }
+    if (!playMem15.isPlaying())
+    {
+        if (inc%2)
+            led_button(4, 2, 0x20, 0);
+        else
+            led_button(4, 2, 0x30, 0);
+    }
     next_timeout = millis();
 }
 
