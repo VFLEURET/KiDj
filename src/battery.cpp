@@ -9,8 +9,8 @@
 static bool fuel_flag = false;
 static bool charger_flag = false;
 
-#define FUEL_GAUGE_ADD (uint8_t)(0x36)
-#define CHARGER_ADD (uint8_t)(0x6A)
+#define FUEL_GAUGE_ADD (int8_t)(0x36)
+#define CHARGER_ADD (int8_t)(0x6A)
 
 
 static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
@@ -34,7 +34,7 @@ static void charger_write(uint8_t reg_add, uint16_t data, uint8_t length)
 
 static uint16_t charger_read(uint8_t reg_add) {
     uint8_t error;
-	uint16_t data, c1, c2;
+	uint16_t c1, c2;
     
     cli();
     Wire.beginTransmission(CHARGER_ADD);
@@ -84,7 +84,7 @@ static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length)
         sei();
         return 0;
     }
-    Wire.requestFrom(FUEL_GAUGE_ADD, length);
+    Wire.requestFrom(FUEL_GAUGE_ADD, (int)length);
     if(Wire.available() == length);
     c1 = Wire.read();
     if (length > 1)
@@ -96,7 +96,7 @@ static uint16_t fuel_gauge_read(uint8_t reg_add, uint8_t length)
 }
 
 
-void init_charger(void) {
+void init_charger(int current) {
 
 
     pinMode(ACOK, INPUT_PULLUP);
@@ -108,9 +108,9 @@ void init_charger(void) {
     }
     charger_write(CHARGE_OPTION1_ADRR, 0x0211, 2);
     //charger_write(CHARGE_OPTION2_ADRR, 0x0000, 2);
-    charger_write(MAX_CHARGE_VOLT_ADRR, 4400, 2);
+    charger_write(MAX_CHARGE_VOLT_ADRR, 4200, 2);
     charger_write(MIN_SYSTEM_VOLT_ADRR, (3100 >> 8) & 0xFF, 1);
-    charger_write(CHARGE_CURRENT_ADRR, 800 * 1.2, 2);
+    charger_write(CHARGE_CURRENT_ADRR, current * 1.2, 2);
     charger_write(INPUT_CURRENT_ADRR, ((int)(1000 * 1.2) >>6), 1);
     //info();
 }
@@ -183,33 +183,46 @@ void update_fuel(bool print_flag) {
 
     if (fuel_flag == false)
         return;
-    uint16_t buffer, volt, Temp, capa, soc;
+    uint16_t volt, Temp, capa, soc;
     int16_t current;
-    static uint16_t previous_status, previous_cap, previous_SOC, previous_Volt, previous_Temp;
+    static uint16_t previous_cap, previous_SOC, previous_Volt, previous_Temp;
     static int16_t previous_Current;
     static boolean previous_state_charger;
+    static int previous_current_charger;
+    int current_charger;
     boolean state_charger;
 
-    // buffer = fuel_gauge_read(0x00, 2);
-    // if (buffer != previous_status) {
-    //     previous_status= buffer;
-    //     console_printf("Fuel gauge status 0x%04X\r\n", buffer >> 1);
-    // }
     state_charger = digitalRead(ACOK);
-    //if (state_charger)
-    //    timeout_sleep = 0;
+
     if (state_charger != previous_state_charger) {
-        DEBUG_PRINTF("state change %d\r\n", state_charger);
+        DEBUG_PRINTF("state change %d Bat : %dV\r\n", state_charger, previous_Volt);
         previous_state_charger = state_charger;
-        init_charger();
+        previous_current_charger = 0; //force init charger    
+    }
+    if (previous_Volt > 415)
+        current_charger = 200;
+    else if (previous_Volt > 410)
+        current_charger = 300;
+    else if (previous_Volt > 406)
+        current_charger = 400;
+    else if (previous_Volt > 390)
+        current_charger = 500;
+    else
+        current_charger = 800;
+
+    if (current_charger != previous_current_charger)
+    {
+        init_charger(current_charger);
         info_charger();
+        previous_current_charger = current_charger;
     }
 
     volt = (fuel_gauge_read(0x19, 2) >> 7 ) & 0x1FF;
-    current = (int16_t)(fuel_gauge_read(0x0A, 2))/8;
-    //Temp = (fuel_gauge_read(0x16, 2) >> 8) & 0xFF;
+    current = (int16_t)(fuel_gauge_read(0x0B, 2))/8;
+    Temp = 0;//(fuel_gauge_read(0x16, 2) >> 8) & 0xFF;
     capa = fuel_gauge_read(0x05, 2);
     soc = (fuel_gauge_read(0x06, 2) >> 8) & 0xFF;
+    
     if ((volt != previous_Volt) ||
         (current != previous_Current) ||
         (Temp != previous_Temp) ||

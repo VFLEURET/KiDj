@@ -75,7 +75,7 @@ void encode_scratch(void)
     int16_t rotl, roth;
     uint32_t position;
     static uint8_t direction = 0;
-    static int16_t cumul;
+    //static int16_t cumul;
 
     if (pix_flag == false)
         return;
@@ -92,7 +92,7 @@ void encode_scratch(void)
         //cumul += rotl;
         //DEBUG_PRINTLN(cumul);
         rotl = -rotl;
-        DEBUG_PRINTF(" Rot : %i\r\n", rotl);
+        //DEBUG_PRINTF(" Rot : %i\r\n", rotl);
         if (rotl > 5)
         {
             if ((playMem16.isPlaying() && direction == 1) ||

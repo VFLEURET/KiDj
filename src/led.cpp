@@ -100,12 +100,7 @@ void init_led(void)
     led_enable_flag = true;
 
     stop_animation_flag = 1;
-    start_animation();
-    //vumetre
-    memset(cmd,0xFF,5);
-    AN32183_write_cmd(DTD1 + 3, 2, cmd);
-    AN32183_write_cmd(DTE1 + 3, 3, cmd);
-    
+    start_animation();   
 }
 
 void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout)
@@ -233,6 +228,10 @@ void stop_animation(void)
     AN32183_write_cmd(DTC1, 5, cmd);
     led_button(0, 3, 0, 0);
     led_button(1, 3, 0, 0);
+    //vumetre
+    memset(cmd,0x10,5);
+    AN32183_write_cmd(DTD1 + 3, 2, cmd);
+    AN32183_write_cmd(DTE1 + 3, 3, cmd);
     stop_animation_flag = 1;
 }
 
@@ -246,6 +245,10 @@ void start_animation(void)
         stop_animation_flag = 0;
         memset(cmd, 0x20, sizeof(cmd));
         AN32183_write_cmd(DTC1, 5, cmd);
+        //vumetre
+        memset(cmd,0xFF,5);
+        AN32183_write_cmd(DTD1 + 3, 2, cmd);
+        AN32183_write_cmd(DTE1 + 3, 3, cmd);
         led_button(0, 3, 0x20, 0);
         led_button(1, 3, 0x20, 0);
         update_animation();
@@ -258,6 +261,8 @@ void led_state(led_state_t new_state)
 
     if (new_state == previous_state)
     return;
+
+    DEBUG_PRINTF("\r\n\r\n NEW STATE LED %d \r\n\r\n", new_state);
 
     if (new_state == CHARGE_LED)
     led_rgb(RED, 3);

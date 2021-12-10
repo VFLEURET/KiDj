@@ -22,7 +22,7 @@ void setup() {
     pinMode(DEBUG_PIN, OUTPUT);
     init_audio();
     init_led();
-    init_charger();
+    init_charger(400);
     init_fuel();
     init_volume(0.8);
     init_button();

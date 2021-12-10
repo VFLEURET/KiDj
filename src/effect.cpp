@@ -14,7 +14,7 @@ void update_effect(void)
     uint16_t knob;
     float feedback;
     //BitCrusher
-    int current_CrushBits = 16; //this defaults to passthrough.
+    //int current_CrushBits = 16; //this defaults to passthrough.
     int current_SampleRate = 44100; // this defaults to passthrough.
 
     if(timeout_effect > 100)

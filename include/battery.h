@@ -1,8 +1,6 @@
 #ifndef __BATTERY_H
 #define __BATTERY_H
 
-#define CHARGER_ADD (uint8_t)(0x6A)
-
 #define ACOK 36
 
 #define CHARGE_OPTION0_ADRR         0x00
@@ -32,8 +30,6 @@
 #define INPUT_CURRENT_ADRR          0x0F
 #define INPUT_CURRENT_LENGTH        (1)
 
-#define FUEL_GAUGE_ADD (uint8_t)(0x36)
-
 #define ModelCfg        0x0400
 #define DesignCap       0x0C80
 #define FullCapNom      0x0C80
@@ -52,7 +48,7 @@
 
 
 
-void init_charger(void);
+void init_charger(int current);
 void info_charger(void);
 void init_fuel(void);
 void update_fuel(bool print_flag);
