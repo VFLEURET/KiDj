@@ -199,7 +199,7 @@ static void encoderA(void) {
         Volume.gain(Vol_f);
         DEBUG_PRINT("New vol : ");
         DEBUG_PRINTLN(Vol_f);
-        timeout_sleep = 0;
+        wakeup();
     }
 
 }
@@ -224,7 +224,7 @@ static void encoderB(void) {
         Volume.gain(Vol_f);
         DEBUG_PRINT("New vol : ");
         DEBUG_PRINTLN(Vol_f);
-        timeout_sleep = 0;
+        wakeup();
     }
 }
 

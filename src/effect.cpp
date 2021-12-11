@@ -56,7 +56,7 @@ void DRUM1_irq(void)
     digitalWrite(39, 1);
     playMemDrum1.play(AudioSampleSnare);
     attachInterrupt(DRUM1, DRUM1_irq, RISING);
-    timeout_sleep = 0;
+    wakeup();
 }
 
 void DRUM2_irq(void)
@@ -65,7 +65,7 @@ void DRUM2_irq(void)
     digitalWrite(39, 1);
     playMemDrum2.play(AudioSampleHihat);
     attachInterrupt(DRUM2, DRUM2_irq, RISING);
-    timeout_sleep = 0;
+    wakeup();
 }
 
 void DRUM3_irq(void)
@@ -74,7 +74,7 @@ void DRUM3_irq(void)
     digitalWrite(39, 1);
     playMemDrum3.play(AudioSampleTomtom);   
     attachInterrupt(DRUM3, DRUM3_irq, RISING);
-    timeout_sleep = 0;
+    wakeup();
 }
 
 void init_drum(void)
