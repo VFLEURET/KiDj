@@ -233,8 +233,10 @@ void update_fuel(bool print_flag) {
         previous_Temp = Temp;
         previous_cap = capa;
         previous_SOC = soc;
-        if (current > 20)
-          led_state(CHARGE_LED);
+        if (current > 50)
+          led_state(CHARGE_LOW_LED);
+        else if (current > 500)
+          led_state(CHARGE_FAST_LED);
         else if (soc < 10)
           led_state(EMPTY_BATT_LED);
         else if (state_charger)

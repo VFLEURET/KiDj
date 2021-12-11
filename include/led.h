@@ -9,7 +9,8 @@ typedef struct{
 
 typedef enum {
   NO_LED,
-  CHARGE_LED,
+  CHARGE_FAST_LED,
+  CHARGE_LOW_LED,
   EMPTY_BATT_LED,
   PSU_EXT_LED,
   PSU_BATT_LED,

@@ -264,12 +264,14 @@ void led_state(led_state_t new_state)
 
     DEBUG_PRINTF("\r\n\r\n NEW STATE LED %d \r\n\r\n", new_state);
 
-    if (new_state == CHARGE_LED)
+    if (new_state == CHARGE_FAST_LED)
     led_rgb(RED, 3);
+    else if (new_state == CHARGE_LOW_LED)
+    led_rgb(ORANGE, 3);
     else if (new_state == VEILLE_LED)
     led_rgb(YELLOW, 3);
     else if (new_state == EMPTY_BATT_LED)
-    led_rgb(ORANGE, 2);
+    led_rgb(MAGENTA, 2);
     else if (new_state == PSU_EXT_LED)
     led_rgb(GREEN, 3);
     else if (new_state == PSU_BATT_LED)
