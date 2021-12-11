@@ -8,6 +8,7 @@
 // #include <SerialFlash.h>
 #include "recorder.h"
 #include "debug.h"
+#include "low_power.h"
 
 #include "audio/AudioSampleSnare.h"        // http://www.freesound.org/people/KEVOY/sounds/82583/
 #include "audio/AudioSampleTomtom.h"       // http://www.freesound.org/people/zgump/sounds/86334/

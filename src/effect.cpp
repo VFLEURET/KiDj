@@ -21,7 +21,7 @@ void update_effect(void)
     {
         knob = analogRead(A17);
 
-        lpf_knob1 = lpf_knob1 + ((knob - lpf_knob1) >> 2);
+        lpf_knob1 = lpf_knob1 + ((knob - lpf_knob1) >> 2); //filter 
         
         if (lpf_knob1 < 10) lpf_knob1 = 0;
 
@@ -33,7 +33,7 @@ void update_effect(void)
         }
 
         knob = analogRead(A16);
-        lpf_knob2 = lpf_knob2 + ((knob - lpf_knob2) >> 2);
+        lpf_knob2 = lpf_knob2 + ((knob - lpf_knob2) >> 2); //filter
            
         if(lpf_knob2 != previous_knob2) {
             if (lpf_knob2 < 10)
@@ -44,7 +44,6 @@ void update_effect(void)
             
             DEBUG_PRINTF("reverd %d %d\r\n", lpf_knob2, current_SampleRate);
             bitcrusher1.sampleRate(current_SampleRate);
-            //reverb.reverbTime(feedback);
             previous_knob2 = lpf_knob2;
         }
         timeout_effect = 0;
@@ -57,7 +56,6 @@ void DRUM1_irq(void)
     digitalWrite(39, 1);
     playMemDrum1.play(AudioSampleSnare);
     attachInterrupt(DRUM1, DRUM1_irq, RISING);
-    digitalWrite(39, 0);
     timeout_sleep = 0;
 }
 
@@ -67,7 +65,6 @@ void DRUM2_irq(void)
     digitalWrite(39, 1);
     playMemDrum2.play(AudioSampleHihat);
     attachInterrupt(DRUM2, DRUM2_irq, RISING);
-    digitalWrite(39, 0);
     timeout_sleep = 0;
 }
 
@@ -77,7 +74,6 @@ void DRUM3_irq(void)
     digitalWrite(39, 1);
     playMemDrum3.play(AudioSampleTomtom);   
     attachInterrupt(DRUM3, DRUM3_irq, RISING);
-    digitalWrite(39, 0);
     timeout_sleep = 0;
 }
 

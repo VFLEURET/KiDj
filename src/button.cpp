@@ -53,8 +53,6 @@ void init_button(void)
 
 void update_button(void)
 {
-    static bool record_flag, play_flag;
-
     button1.update(); 
     button2.update(); 
     button3.update(); 
@@ -78,61 +76,61 @@ void update_button(void)
     {
         playMem1.play(AudioSampleVache);
         led_button(0, 0, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button2.fallingEdge())
     {
         playMem2.play(AudioSampleChien);
         led_button(1, 0, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button3.fallingEdge())
     {
         playMem3.play(AudioSampleChat);
         led_button(2, 0, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button4.fallingEdge())
     {
         playMem4.play(AudioSampleApplau);
         led_button(3, 0, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button5.fallingEdge())
     {
         playMem5.play(AudioSampleHakuna);
         led_button(4, 0, 0xFF, 5000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button6.fallingEdge())
     {
         playMem6.play(AudioSampleMixedbrasshitwa);
         led_button(0, 1, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button7.fallingEdge())
     {
         playMem7.play(AudioSamplePiano);
         led_button(1, 1, 0xFF, 1000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button8.fallingEdge())
     {
         playMem8.play(AudioSampleGong);
         led_button(2, 1, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button9.fallingEdge())
     {
         playMem9.play(AudioSampleNoelie);
         led_button(3, 1, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button10.fallingEdge())
     {
         playMem10.play(AudioSampleAnna);
         led_button(4, 1, 0xFF, 2000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if(button11.fallingEdge())
     {
@@ -159,97 +157,73 @@ void update_button(void)
     {
         playMem11.play(AudioSampleSly);
         led_button(0, 2, 0xFF, 1000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if (!loop_bt11 && (playMem11.isPlaying()))
     {
         playMem11.stop();
-        led_button(0, 2, 0x10, 1000);
+        led_button(0, 2, 0x20, 1000);
     }
 
     if (loop_bt12 && !(playMem12.isPlaying()))
     {
         playMem12.play(AudioSampleXylo);
         led_button(1, 2, 0xFF, 1000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if (!loop_bt12 && (playMem12.isPlaying()))
     {
         playMem12.stop();
-        led_button(1, 2, 0x10, 1000);
-        timeout_sleep = 0;
+        led_button(1, 2, 0x20, 1000);
+        wakeup();
     }
 
     if (loop_bt13 && !(playMem13.isPlaying()))
     {
         playMem13.play(AudioSampleHacienda);
         led_button(2, 2, 0xFF, 1000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if (!loop_bt13 && (playMem13.isPlaying()))
     {
         playMem13.stop();
-        led_button(2, 2, 0x10, 1000);
+        led_button(2, 2, 0x20, 1000);
     }
 
     if (loop_bt14 && !(playMem14.isPlaying()))
     {
         playMem14.play(AudioSampleSka);
         led_button(3, 2, 0xFF, 1000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if (!loop_bt14 && (playMem14.isPlaying()))
     {
         playMem14.stop();
-        led_button(3, 2, 0x10, 1000);
-        timeout_sleep = 0;
+        led_button(3, 2, 0x20, 1000);
+        wakeup();
     }
 
     if (loop_bt15 && !(playMem15.isPlaying()))
     {
         playMem15.play(AudioSampleScratch_norm);
         led_button(4, 2, 0xFF, 1000);
-        timeout_sleep = 0;
+        wakeup();
     }
     if (!loop_bt15 && (playMem15.isPlaying()))
     {
         playMem15.stop();
-        led_button(4, 2, 0x10, 1000);
+        led_button(4, 2, 0x20, 1000);
     }
 
     if(bt_Rec.fallingEdge())
     {
-        if (record_flag)
-        {
-            stop_recorder();
-            record_flag = 0;
-        } else {
-            if (play_flag)
-            {
-                stop_buffer();  
-                play_flag = 0;
-            }
-            start_recorder();
-            record_flag = 1;
-        }
-        timeout_sleep = 0;
+        //start_recorder();
+        wakeup();
     }
 
     if(bt_Play.fallingEdge())
     {
-        if (play_flag)
-        {
-            stop_buffer();             
-            play_flag = 0;
-        } else {
-            if(record_flag)
-            {
-                stop_recorder();            
-                record_flag = 0;
-            }
-            play_buffer();
-            play_flag = 1;
-        }
-        timeout_sleep = 0;
+        //play_record();
+        wakeup();
     }
 }

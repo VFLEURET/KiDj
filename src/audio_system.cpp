@@ -149,52 +149,11 @@ void init_mixer(void)
 void init_audio(void) 
 {
     AudioMemory(1000);
-    //pinMode(23, OUTPUT); //vumetre
-    //analogWrite(23, 0);
     pinMode(33, OUTPUT); //sd ampli
     digitalWrite(33, true);
-    //reverb.reverbTime(0);
     bitcrusher1.sampleRate(44100);
     bitcrusher1.bits(16);
-    //pinMode(37, INPUT_PULLUP);
-    //amp_Micro.gain(0.0);
-    //mixer1.gain(3, 2);
-    //biquad_Micro.setHighpass(0, 200, 0.7);
-    //biquad_Micro.setHighpass(1, 200, 0.7);
-    //biquad_Micro.setHighpass(2, 200, 0.7);
-    //biquad_Micro.setLowpass(2, 8000, 0.7);
-    //biquad_Micro.setLowpass(3, 8000, 0.7);
 }
-
-elapsedMillis timeout_Micro;
-
-void update_micro(void)
-{
-    static uint8_t previous_state = 4;
-    uint8_t new_state;
-
-    if(timeout_Micro < 100)
-        return;
-
-    new_state = digitalRead(37);
-
-    if (new_state != previous_state)
-    {
-
-        if (new_state)
-            amp_Micro.gain(0.0);
-         else
-            amp_Micro.gain(10.0);
-        DEBUG_PRINTF("Micro : %d\r\n", new_state);
-        previous_state = new_state;
-    }
-    if(!new_state && peak_micro.available())
-        DEBUG_PRINTLN(peak_micro.read());
-    //if (rms_micro.available())
-    //    DEBUG_PRINTLN(rms_micro.read());
-    timeout_Micro = 0;
-}
-
 
 #define ENCA 16
 #define ENCB 15

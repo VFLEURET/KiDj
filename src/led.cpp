@@ -1,14 +1,16 @@
 #include <Audio.h>
 #include <Wire.h>
 
+#include "audio_system.h"
 #include "led.h"
 #include "debug.h"
 
-#define ADD_AN32183 0x5D
+#define ADD_AN32183 0x5C
 #define LED_EN 35
 
 static uint32_t next_timeout;
 static bool led_enable_flag = false;
+static bool stop_animation_flag = 0;
 
 uint8_t AN32183_write_cmd(uint8_t reg, uint8_t length, uint8_t* data)
 {
@@ -56,14 +58,14 @@ void all_led(uint8_t bright){
 void init_led(void)
 {
     uint8_t cmd[9];
-
     Wire.begin();
+
     pinMode(LED_EN, OUTPUT);
     digitalWrite(LED_EN, false);
     delay(10);
     digitalWrite(LED_EN, true);
     delay(10);
-
+    
     cmd[0] = 0x01;
     if(AN32183_write_cmd(POWERCNT,1,cmd))
     {
@@ -71,30 +73,34 @@ void init_led(void)
         return;
     }
 
-    cmd[0] = _15_mA + 0x01;
+    cmd[0] = _22_5_mA + 0x01;
     AN32183_write_cmd(MTXON,1,cmd);
 
     memset(cmd,0xFF,9);
     AN32183_write_cmd(PWMEN1,9,cmd);
     AN32183_write_cmd(PWMEN10,2,cmd);
 
-//    cmd[0] = 0x00;
-//    AN32183_write_cmd(SCANSET,1,cmd);
+  //  cmd[0] = 0x04;
+  //  AN32183_write_cmd(SCANSET,1,cmd);
     
-    //memset(cmd,0xA7,9); //10mA ans 0.888 x T
-    memset(cmd,0xA1,9); //20mA ans 0.333 x T
-    //memset(cmd,0x10,9); //4mA ans 0.333 x T
+    //memset(cmd,0xA7,9); //20mA and 0.888 x T
+    memset(cmd,0xA2,9); //20mA and 0.333 x T
+    //memset(cmd,0x10,9); //4mA and 0.333 x T
     AN32183_write_cmd(A1_PWM,9,cmd);
     AN32183_write_cmd(B1_PWM,9,cmd);
     AN32183_write_cmd(C1_PWM,9,cmd);
     AN32183_write_cmd(D1_PWM,9,cmd);
-    
-    all_led(0x50);
-    delay(2000);
+    AN32183_write_cmd(E1_PWM,9,cmd);
+    //retroeclairage vumetre
+    memset(cmd,0xF2,5);
+    AN32183_write_cmd(D1_PWM + 3, 2, cmd);
+    AN32183_write_cmd(E1_PWM + 3, 3, cmd);
+
     clear_led();
-    //memset(cmd,0x10,5);
-    //AN32183_write_cmd(DTC1, 5, cmd);
     led_enable_flag = true;
+
+    stop_animation_flag = 1;
+    start_animation();   
 }
 
 void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout)
@@ -108,6 +114,7 @@ void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout)
         return;
     if(y > 3)
         return;
+    //DEBUG_PRINTF("led x %d y %d PWM %d \r\n",x, y, bright);
     reg = DTA1 + x + (y*9);
     AN32183_write_cmd(reg, 1, &bright);
     next_timeout = millis() + timeout;    
@@ -131,14 +138,24 @@ void led_rgb(rgb_t color, uint8_t bright)
     AN32183_write_cmd(DTD1 + 5, 1, &b);
 }
 
-//uint8_t sweep[] = {1, 2, 3, 4, 6, 8, 10, 15, 20, 30, 40, 60, 60, 40, 30, 20, 15, 10, 8, 6, 4, 3, 2, 1};
-uint8_t sweep[6][4] = {{255,100,50,20},
-                        {100,255,100,50},
-                        {50,100,255,100},
-                        {50,100,255,100},
-                        {20,50,100,255},
-                        {10,20,50,100},
+//uint8_t sweep[6][5] =  {{255,100,50,20,10},
+//                        {100,255,100,50,20},
+//                        {50,100,255,100,50},
+//                        {20,50,100,255,100},
+//                        {10,20,50,100,255},
+//                        {10,10,20,50,100},
+//                        };
+
+uint8_t sweep[7][5] =  {{255,20,20,20,20},
+                        {100,255,20,20,20},
+                        {50,100,255,20,20},
+                        {30,50,100,255,20},
+                        {20,30,50,100,255},
+                        {20,20,30,50,100},
+                        {20,20,20,30,50},
                         };
+
+
 
 void update_animation(void)
 {
@@ -147,57 +164,93 @@ void update_animation(void)
     if(!led_enable_flag)
         return;
 
+    if(stop_animation_flag)
+        return;
+
     if (millis() < (next_timeout) + 250)
         return;
 
-    switch(inc)
+    AN32183_write_cmd(DTA1, 5, sweep[inc]);
+    AN32183_write_cmd(DTB1, 5, sweep[inc]);
+    inc ++;
+
+    if (inc > 6)
+        inc = 0;
+
+    if (!playMem11.isPlaying())
     {
-        case 0 ... 4 :
-        //case 1 :
-        //case 2 :
-            AN32183_write_cmd(DTA1, 4, sweep[inc]);
-            AN32183_write_cmd(DTB1, 4, sweep[inc]);
-            AN32183_write_cmd(DTC1, 4, sweep[inc]);
-            AN32183_write_cmd(DTD1, 4, sweep[inc]);
-           // led_button(0, 3, 0xFF, 0);
-            //led_button(1, 3, 0xFF, 0);
-            //AN32183_write_cmd(DTC1, 5, sweep[inc+2]);
-            inc ++;
-        break;
-        case 5 :
-            AN32183_write_cmd(DTA1, 4, sweep[inc]);
-            AN32183_write_cmd(DTB1, 4, sweep[inc]);
-            AN32183_write_cmd(DTC1, 4, sweep[inc]);
-            AN32183_write_cmd(DTD1, 4, sweep[inc]);
-            //AN32183_write_cmd(DTC1, 5, sweep[1]);
-            inc = 0;
-        break;         
-        default:
-            inc = 0;
-        break;
-
+        if (inc%2)
+            led_button(0, 2, 0x20, 0);
+        else
+            led_button(0, 2, 0x30, 0);
     }
-
+    if (!playMem12.isPlaying())
+    {
+        if (inc%2)
+            led_button(1, 2, 0x20, 0);
+        else
+            led_button(1, 2, 0x30, 0);
+    }
+    if (!playMem13.isPlaying())
+    {
+        if (inc%2)
+            led_button(2, 2, 0x20, 0);
+        else
+            led_button(2, 2, 0x30, 0);
+    }
+    if (!playMem14.isPlaying())
+    {
+        if (inc%2)
+            led_button(3, 2, 0x20, 0);
+        else
+            led_button(3, 2, 0x30, 0);
+    }
+    if (!playMem15.isPlaying())
+    {
+        if (inc%2)
+            led_button(4, 2, 0x20, 0);
+        else
+            led_button(4, 2, 0x30, 0);
+    }
     next_timeout = millis();
 }
 
-void led_state(led_state_t new_state)
+void stop_animation(void)
 {
-    static uint8_t previous_state;
+    if(stop_animation_flag)
+        return;
+    DEBUG_PRINTLN("stop led");
+    uint8_t cmd[5];
+    memset(cmd, 0, sizeof(cmd));
 
-    if (new_state == previous_state)
-    return;
+    AN32183_write_cmd(DTA1, 5, cmd);
+    AN32183_write_cmd(DTB1, 5, cmd);
+    AN32183_write_cmd(DTC1, 5, cmd);
+    led_button(0, 3, 0, 0);
+    led_button(1, 3, 0, 0);
+    //vumetre
+    memset(cmd,0x10,5);
+    AN32183_write_cmd(DTD1 + 3, 2, cmd);
+    AN32183_write_cmd(DTE1 + 3, 3, cmd);
+    stop_animation_flag = 1;
+}
 
-    if (new_state == CHARGE_LED)
-    led_rgb(RED, 3);
-    else if (new_state == VEILLE_LED)
-    led_rgb(YELLOW, 3);
-    else if (new_state == EMPTY_BATT_LED)
-    led_rgb(ORANGE, 2);
-    else if (new_state == PSU_EXT_LED)
-    led_rgb(GREEN, 3);
-    else if (new_state == PSU_BATT_LED)
-    led_rgb(CYAN, 3);
-    
-    previous_state = new_state;
+void start_animation(void)
+{
+    uint8_t cmd[5];
+
+    if (stop_animation_flag)
+    {
+        DEBUG_PRINTLN("start led");
+        stop_animation_flag = 0;
+        memset(cmd, 0x20, sizeof(cmd));
+        AN32183_write_cmd(DTC1, 5, cmd);
+        //vumetre
+        memset(cmd,0xFF,5);
+        AN32183_write_cmd(DTD1 + 3, 2, cmd);
+        AN32183_write_cmd(DTE1 + 3, 3, cmd);
+        led_button(0, 3, 0x20, 0);
+        led_button(1, 3, 0x20, 0);
+        update_animation();
+    }
 }
