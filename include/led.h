@@ -21,6 +21,7 @@ typedef enum {
 } led_state_t;
 
 void init_led(void);
+void button_clear(void);
 void update_animation(void);
 void led_rgb(rgb_t color, uint8_t bright);
 void led_button(uint8_t x, uint8_t y, uint8_t bright, uint16_t timeout);

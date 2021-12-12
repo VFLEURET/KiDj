@@ -80,8 +80,8 @@ void init_led(void)
     AN32183_write_cmd(PWMEN1,9,cmd);
     AN32183_write_cmd(PWMEN10,2,cmd);
 
-  //  cmd[0] = 0x04;
-  //  AN32183_write_cmd(SCANSET,1,cmd);
+    cmd[0] = 0x5;
+    AN32183_write_cmd(SCANSET,1,cmd);
     
     //memset(cmd,0xA7,9); //20mA and 0.888 x T
     memset(cmd,0xA2,9); //20mA and 0.333 x T
@@ -131,20 +131,24 @@ void led_rgb(rgb_t color, uint8_t bright)
         bright = 8;
 
     r = color.red >> bright;
-    g = color.blue >> bright;
-    b = color.green >> bright;
+    g = color.green >> bright;
+    b = color.blue >> bright;
     AN32183_write_cmd(DTB1 + 5, 1, &r);    
     AN32183_write_cmd(DTC1 + 5, 1, &g);
     AN32183_write_cmd(DTD1 + 5, 1, &b);
 }
 
-//uint8_t sweep[6][5] =  {{255,100,50,20,10},
-//                        {100,255,100,50,20},
-//                        {50,100,255,100,50},
-//                        {20,50,100,255,100},
-//                        {10,20,50,100,255},
-//                        {10,10,20,50,100},
-//                        };
+void button_clear(void)
+{
+    uint8_t cmd[5];
+
+    if(sample_play())
+        return;
+    
+    memset(cmd, 0x20, 5);
+    AN32183_write_cmd(DTA1, 5, cmd);
+    AN32183_write_cmd(DTB1, 5, cmd);
+}
 
 uint8_t sweep[7][5] =  {{255,20,20,20,20},
                         {100,255,20,20,20},
@@ -169,10 +173,12 @@ void update_animation(void)
 
     if (millis() < (next_timeout) + 250)
         return;
-
-    AN32183_write_cmd(DTA1, 5, sweep[inc]);
-    AN32183_write_cmd(DTB1, 5, sweep[inc]);
-    inc ++;
+    if(!sample_play())
+    {
+        AN32183_write_cmd(DTA1, 5, sweep[inc]);
+        AN32183_write_cmd(DTB1, 5, sweep[inc]);
+        inc ++;
+    }
 
     if (inc > 6)
         inc = 0;

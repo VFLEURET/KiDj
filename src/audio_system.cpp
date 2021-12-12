@@ -324,3 +324,29 @@ static bool encoder_inc(void)
     }
     return false;
 }
+
+bool sample_play(void)
+{
+    if(playMem1.isPlaying())
+        return true;
+    if(playMem2.isPlaying())
+        return true;
+    if(playMem3.isPlaying())
+        return true;
+    if(playMem4.isPlaying())
+        return true;
+    if(playMem5.isPlaying())
+        return true;
+    if(playMem6.isPlaying())
+        return true;
+    if(playMem7.isPlaying())
+        return true;
+    if(playMem8.isPlaying())
+        return true;
+    if(playMem9.isPlaying())
+        return true;
+    if(playMem10.isPlaying())
+        return true;
+        
+    return false;
+}

@@ -103,11 +103,9 @@ void encode_scratch(void)
                 playMem16.stop();
                 playMem16.play(AudioSampleScratch_norm + position);
                 direction = 0;
-                timeout_scratch = rotl * 100 + millis();;
                 wakeup();
             }
-            timeout_scratch = rotl * 100 + millis();;
-
+            timeout_scratch = rotl * 50 + millis();;
         }
         else if(rotl < -5)
         {
@@ -117,10 +115,9 @@ void encode_scratch(void)
                 playMem16.stop();
                 playMem16.play(AudioSampleDj);
                 direction = 1;
-                timeout_scratch = -rotl * 100 + millis();
                 wakeup();
             }
-            timeout_scratch = -rotl * 100 + millis();
+            timeout_scratch = -rotl * 30 + millis();
         }
     }
 

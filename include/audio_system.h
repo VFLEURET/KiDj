@@ -45,7 +45,7 @@ void init_volume(float Vol_ext);
 
 void init_scratch(void);
 void update_scratch(void);
-
+bool sample_play(void);
 extern elapsedMillis timeout_sleep; 
 
 extern AudioPlayMemory          playMem1;       //xy=170,20
